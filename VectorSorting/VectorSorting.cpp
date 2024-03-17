@@ -175,19 +175,22 @@ void quickSort(vector<Bid>& bids, int begin, int end) {
  *            instance to be sorted
  */
 void selectionSort(vector<Bid>& bids) {
-    //define min as int (index of the current minimum bid)
-
-    // check size of bids vector
-    // set size_t platform-neutral result equal to bid.size()
+    size_t min = 0; //define min as int (index of the current minimum bid)
+    size_t size = bids.size(); // check size of bids vector
 
     // pos is the position within bids that divides sorted/unsorted
-    // for size_t pos = 0 and less than size -1 
-        // set min = pos
-        // loop over remaining elements to the right of position
-            // if this element's title is less than minimum title
-                // this element becomes the minimum
-        // swap the current minimum with smaller one found
-            // swap is a built in vector method
+    for (size_t pos = 0; pos < size - 1; ++pos) { 
+        min = pos;
+        for (size_t i = pos + 1; i < size; ++i) { // loop over remaining elements to the right of position
+            if (bids[i].title < bids[min].title) { // if this element's title is less than minimum title
+                min = i; // this element becomes the minimum
+            }
+        }
+
+        if (min != pos) { // swap the current minimum with smaller one found
+            swap(bids[pos], bids[min]);
+        }
+    }
     return;
 }
 
