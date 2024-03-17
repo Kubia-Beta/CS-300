@@ -1,0 +1,69 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\gfloy\\source\\repos\\VectorSorting\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{19F4FE98-AE9C-4968-AF44-E12DA08184CE}|VectorSorting.vcxproj|C:\\Users\\gfloy\\source\\repos\\VectorSorting\\VectorSorting.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{19F4FE98-AE9C-4968-AF44-E12DA08184CE}|VectorSorting.vcxproj|solutionrelative:VectorSorting.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19F4FE98-AE9C-4968-AF44-E12DA08184CE}|VectorSorting.vcxproj|C:\\Users\\gfloy\\source\\repos\\VectorSorting\\CSVparser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{19F4FE98-AE9C-4968-AF44-E12DA08184CE}|VectorSorting.vcxproj|solutionrelative:CSVparser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{19F4FE98-AE9C-4968-AF44-E12DA08184CE}|VectorSorting.vcxproj|C:\\Users\\gfloy\\source\\repos\\VectorSorting\\CSVparser.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{19F4FE98-AE9C-4968-AF44-E12DA08184CE}|VectorSorting.vcxproj|solutionrelative:CSVparser.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "VectorSorting.cpp",
+              "DocumentMoniker": "C:\\Users\\gfloy\\source\\repos\\VectorSorting\\VectorSorting.cpp",
+              "RelativeDocumentMoniker": "VectorSorting.cpp",
+              "ToolTip": "C:\\Users\\gfloy\\source\\repos\\VectorSorting\\VectorSorting.cpp",
+              "RelativeToolTip": "VectorSorting.cpp",
+              "ViewState": "AQIAAIEAAAAAAAAAAAAAABcAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-03-16T20:41:10.362Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CSVparser.hpp",
+              "DocumentMoniker": "C:\\Users\\gfloy\\source\\repos\\VectorSorting\\CSVparser.hpp",
+              "RelativeDocumentMoniker": "CSVparser.hpp",
+              "ToolTip": "C:\\Users\\gfloy\\source\\repos\\VectorSorting\\CSVparser.hpp",
+              "RelativeToolTip": "CSVparser.hpp",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAkAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-03-16T21:21:39.964Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CSVparser.cpp",
+              "DocumentMoniker": "C:\\Users\\gfloy\\source\\repos\\VectorSorting\\CSVparser.cpp",
+              "RelativeDocumentMoniker": "CSVparser.cpp",
+              "ToolTip": "C:\\Users\\gfloy\\source\\repos\\VectorSorting\\CSVparser.cpp",
+              "RelativeToolTip": "CSVparser.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-03-16T22:30:25.282Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

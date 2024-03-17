@@ -1,0 +1,9 @@
+﻿  VectorSorting.cpp
+C:\Users\gfloy\source\repos\VectorSorting\VectorSorting.cpp(94,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\gfloy\source\repos\VectorSorting\VectorSorting.cpp(259,31): warning C4018: '<': signed/unsigned mismatch
+VectorSorting.obj : error LNK2001: unresolved external symbol "public: class csv::Row & __thiscall csv::Parser::operator[](unsigned int)const " (??AParser@csv@@QBEAAVRow@1@I@Z)
+VectorSorting.obj : error LNK2001: unresolved external symbol "public: unsigned int __thiscall csv::Parser::rowCount(void)const " (?rowCount@Parser@csv@@QBEIXZ)
+VectorSorting.obj : error LNK2001: unresolved external symbol "public: __thiscall csv::Parser::~Parser(void)" (??1Parser@csv@@QAE@XZ)
+VectorSorting.obj : error LNK2001: unresolved external symbol "public: __thiscall csv::Parser::Parser(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &,enum csv::DataType const &,char)" (??0Parser@csv@@QAE@ABV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@ABW4DataType@1@D@Z)
+VectorSorting.obj : error LNK2001: unresolved external symbol "public: class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const __thiscall csv::Row::operator[](unsigned int)const " (??ARow@csv@@QBE?BV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@I@Z)
+C:\Users\gfloy\source\repos\VectorSorting\Release\VectorSorting.exe : fatal error LNK1120: 5 unresolved externals

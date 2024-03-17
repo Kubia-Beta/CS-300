@@ -1,0 +1,9 @@
+﻿  CSVparser.cpp
+C:\Users\gfloy\source\repos\VectorSorting\CSVparser.cpp(116,27): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\gfloy\source\repos\VectorSorting\CSVparser.cpp(121,26): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\gfloy\source\repos\VectorSorting\CSVparser.cpp(203,24): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 482 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  VectorSorting.vcxproj -> C:\Users\gfloy\source\repos\VectorSorting\x64\Release\VectorSorting.exe
