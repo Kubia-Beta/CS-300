@@ -264,7 +264,16 @@ int main(int argc, char* argv[]) {
             break;
 
         // FIXME (1b): Invoke the selection sort and report timing results
+        case 3:
+            ticks = clock(); // Start the timer
+            selectionSort(bids);
+            ticks = clock() - ticks; // Update the timer now that sorting is done
+            cout << "Selection sort time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
 
+            break;
+
+        case 4:
+            break;
         // FIXME (2b): Invoke the quick sort and report timing results
 
         }
