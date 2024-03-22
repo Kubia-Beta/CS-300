@@ -185,8 +185,6 @@ void quickSort(vector<Bid>& bids, int begin, int end) {
     return;
 }
 
-// FIXME (1a): Implement the selection sort logic over bid.title
-
 /**
  * Perform a selection sort on bid title
  * Average performance: O(n^2))

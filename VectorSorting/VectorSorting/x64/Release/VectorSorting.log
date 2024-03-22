@@ -1,6 +1,6 @@
 ﻿  VectorSorting.cpp
 C:\Users\gfloy\source\repos\VectorSorting\VectorSorting.cpp(94,27): warning C4018: '<': signed/unsigned mismatch
-C:\Users\gfloy\source\repos\VectorSorting\VectorSorting.cpp(307,44): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\gfloy\source\repos\VectorSorting\VectorSorting.cpp(305,44): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   Generating code
   0 of 493 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
