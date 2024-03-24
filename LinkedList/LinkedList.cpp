@@ -79,8 +79,10 @@ public:
  * Default constructor
  */
 LinkedList::LinkedList() {
-    // FIXME (1): Initialize housekeeping variables
     //set head and tail equal to null
+    head = nullptr;
+    tail = nullptr;
+    size = 0;
 }
 
 /**
@@ -91,11 +93,11 @@ LinkedList::~LinkedList() {
     Node* current = head;
     Node* temp;
 
-    // loop over each node, detach from list then delete
+    // loop over each node
     while (current != nullptr) {
         temp = current; // hang on to current node
         current = current->next; // make current the next node
-        delete temp; // delete the orphan node
+        delete temp; // delete temp clutter
     }
 }
 
@@ -105,27 +107,33 @@ LinkedList::~LinkedList() {
 void LinkedList::Append(Bid bid) {
     // FIXME (2): Implement append logic
     //Create new node
-    //if there is nothing at the head...
-            // new node becomes the head and the tail
-    //else 
-        // make current tail node point to the new node
-        // and tail becomes the new node
-    //increase size count
+    Node* newNode = new Node(bid); // Create a new node with the given bid
+    if (head == nullptr) { // If there is nothing at the head
+        head = newNode;
+        tail = newNode;
+    } else { // If there is something at the head
+    		tail->next = newNode; // Make the current tail node point to the new node
+    		tail = newNode; // Make the tail the new node
+    }
+    size++; // Increase the size count
 }
 
 /**
  * Prepend a new bid to the start of the list
  */
 void LinkedList::Prepend(Bid bid) {
-    // FIXME (3): Implement prepend logic
-    // Create new node
+    Node* newNode = new Node(bid); // Create a new node with the given bid
 
     // if there is already something at the head...
         // new node points to current head as its next node
-
-    // head now becomes the new node
-    //increase size count
-
+    if (head == nullptr) { // If there is nothing at the head
+    		head = newNode;
+    		tail = newNode; 
+    } else { // If there is something at the head
+    		newNode->next = head; // new node points to current head as its next node
+    		head = newNode; // head now becomes the new node
+    }
+    size++; //increase size count
 }
 
 /**
@@ -134,6 +142,7 @@ void LinkedList::Prepend(Bid bid) {
 void LinkedList::PrintList() {
     // FIXME (4): Implement print logic
     // start at the head
+
 
     // while loop over each node looking for a match
         //output current bidID, title, amount and fund
