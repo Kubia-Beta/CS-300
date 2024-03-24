@@ -150,14 +150,13 @@ void LinkedList::PrintList() {
  * @param bidId The bid id to remove from the list
  */
 void LinkedList::Remove(string bidId) {
-	// FIXME (5): Implement remove logic
 	Node* current = head;
 	Node* previous = nullptr;
 
 	while (current != nullptr) { // Loop over each node in the list
 		if (current->bid.bidId == bidId) { // If the current node bidID matches the given bidID
-			if (previous == nullptr) { // If the node is the head
-				head = current->next; // Make the head point to the next node
+			if (previous == nullptr) { // Special case if matching node is the head
+				head = current->next; // Make the head point to the next node in the list
 			}
 			else {
 				previous->next = current->next; // Make the previous node point to the next node
@@ -181,7 +180,7 @@ void LinkedList::Remove(string bidId) {
 			// hold onto the next node temporarily
 		 // make current node point beyond the next node
 		 
-		 // decrease size count
+		 // decrease size count // Good idea, but notice that we decrease the size count every time, so there is no need to do it seperately
 		 //return
 
 	//} // Why was this not commented out when distributed?
@@ -195,7 +194,15 @@ void LinkedList::Remove(string bidId) {
  */
 Bid LinkedList::Search(string bidId) {
 	// FIXME (6): Implement search logic
+	Node* current = head;
 
+	while (current != nullptr) { // Loop over each node in the list
+		if (current->bid.bidId == bidId) { // If the current node bidID matches the given bidID
+			return current->bid; // Return the current bid information of the current node
+		}
+		current = current->next; // Move to the next node
+	}
+	return Bid(); // Return an empty bid if the bidID is not found
 	// special case if matching node is the head
 		// make head point to the next node in the list
 		//decrease size count
@@ -305,6 +312,16 @@ double strToDouble(string str, char ch) {
 }
 
 /**
+ * Simple C function to clear the input buffer
+ * when we are done reading through cin
+ *
+ * Credit:  https://stackoverflow.com/a/257091/
+ */
+void clearInputBuffer() {
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+/**
  * The one and only main() method
  *
  * @param arg[1] path to CSV file to load from (optional)
@@ -345,6 +362,8 @@ int main(int argc, char* argv[]) {
 		cout << "  9. Exit" << endl;
 		cout << "Enter choice: ";
 		cin >> choice;
+		cout << endl; // By not passing endl, cout will have a line buffering issue.
+		clearInputBuffer();
 
 		switch (choice) {
 		case 1:
