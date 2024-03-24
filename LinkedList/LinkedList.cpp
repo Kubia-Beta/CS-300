@@ -140,13 +140,13 @@ void LinkedList::Prepend(Bid bid) {
  * Simple output of all bids in the list
  */
 void LinkedList::PrintList() {
-    // FIXME (4): Implement print logic
-    // start at the head
+    Node* current = head; // start at the head
 
-
-    // while loop over each node looking for a match
-        //output current bidID, title, amount and fund
-        //set current equal to next
+    while(current != nullptr) { // while loop over each node looking for a match
+    		cout << current->bid.bidId << ": " << current->bid.title << " | " << current->bid.amount << " | "
+                << current->bid.fund << endl; // output the current bidID, title, amount, and fund
+    		current = current->next; // set current equal to next
+    	}
 }
 
 /**
