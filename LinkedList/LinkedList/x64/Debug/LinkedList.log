@@ -1,0 +1,3 @@
+﻿  LinkedList.cpp
+C:\Users\gfloy\source\repos\LinkedList\LinkedList.cpp(282,21): warning C4018: '<': signed/unsigned mismatch
+  LinkedList.vcxproj -> C:\Users\gfloy\source\repos\LinkedList\x64\Debug\LinkedList.exe

@@ -93,8 +93,7 @@ LinkedList::~LinkedList() {
 	Node* current = head;
 	Node* temp;
 
-	// loop over each node
-	while (current != nullptr) {
+	while (current != nullptr) { // loop over each node
 		temp = current; // hang on to current node
 		current = current->next; // make current the next node
 		delete temp; // delete temp clutter
@@ -105,7 +104,6 @@ LinkedList::~LinkedList() {
  * Append a new bid to the end of the list
  */
 void LinkedList::Append(Bid bid) {
-	//Create new node
 	Node* newNode = new Node(bid); // Create a new node with the given bid
 	if (head == nullptr) { // If there is nothing at the head so the list is empty
 		head = newNode;
@@ -150,8 +148,8 @@ void LinkedList::PrintList() {
  * @param bidId The bid id to remove from the list
  */
 void LinkedList::Remove(string bidId) {
-	Node* current = head;
-	Node* previous = nullptr;
+	Node* current = head; // Start from the head node
+	Node* previous = nullptr; // Set null until we obtain a previous node
 
 	while (current != nullptr) { // Loop over each node in the list
 		if (current->bid.bidId == bidId) { // If the current node bidID matches the given bidID
@@ -169,6 +167,11 @@ void LinkedList::Remove(string bidId) {
 		previous = current;
 		current = current->next; // curret node is equal to next node
 	}
+
+	/* TODO: Evaluate the following comments and try matching their structure, rather than use mine which is derived from it.
+	*  It's structure has the same base logic and will work the same as mine.
+	*  This means it is a good learning opportunity to replicate more exactly.
+	*/ 
 	// special case if matching node is the head
 		// make head point to the next node in the list
 		//decrease size count
@@ -193,7 +196,6 @@ void LinkedList::Remove(string bidId) {
  * @param bidId The bid id to search for
  */
 Bid LinkedList::Search(string bidId) {
-	// FIXME (6): Implement search logic
 	Node* current = head;
 
 	while (current != nullptr) { // Loop over each node in the list
@@ -203,18 +205,6 @@ Bid LinkedList::Search(string bidId) {
 		current = current->next; // Move to the next node
 	}
 	return Bid(); // Return an empty bid if the bidID is not found
-	// special case if matching node is the head
-		// make head point to the next node in the list
-		//decrease size count
-		//return
-
-	// start at the head of the list
-
-	// keep searching until end reached with while loop (next != nullptr
-		// if the current node matches, return it
-		// else current node is equal to next node
- 
-	 //return bid
 }
 
 /**
@@ -342,7 +332,7 @@ int main(int argc, char* argv[]) {
 		break;
 	default:
 		csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
-		bidKey = "98109";
+		bidKey = "98233"; // 98109 is the default bid key, 98233 is the last in eBid_Monthly_Sales_Dec_2016.csv when unsorted
 	}
 
 	clock_t ticks;
