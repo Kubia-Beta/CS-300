@@ -1,7 +1,28 @@
-struct Course { //FIXME, hash table
-	int courseNumber
-	string courseTitle
-	vector<int> coursePrerequisites
+const unsigned int DEFAULT_SIZE = 947; // Largest 3 digit prime as a default constant
+
+struct Course { // Structure to hold course information
+	int courseNumber;
+	string courseTitle;
+	vector<int> coursePrerequisites;
+	Course(){
+		courseNumber = INT_MAX;
+	}
+}
+
+struct Node {
+	unsigned int key
+	Node* next;
+	Node* prev;
+	
+	Node(){ // Default constructor
+		key = UINT_MAX; // 0xFFFFFFFF
+		next = nullptr;
+		prev = nullptr;
+	}
+	
+	Node() : Node() { // Call the default constructor when calling the constructor
+		
+	}
 }
 
 
@@ -62,14 +83,3 @@ void openAndReadFile(string file, Vector<Course> courses) {
 
 }
 
-struct Node {
-	unsigned int key
-	Node next
-	
-	Node(){ // Default constructor
-		key = UINT_MAX
-		next = nullptr
-	}
-	
-	Node()
-}
