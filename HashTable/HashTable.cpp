@@ -133,21 +133,21 @@ unsigned int HashTable::hash(int key) {
 void HashTable::Insert(Bid bid) {
 	unsigned key = hash(atoi(bid.bidId.c_str())); // Bid ID is converted to string of characters from string object, ascii to integer is then called, the key is now finalized
 
-	Node* oldNode = &(nodes.at(key)); // Gets the address of the node at the key position
-	if (oldNode == nullptr) { // if no entry found for the key
+	Node* node = &(nodes.at(key)); // Gets the address of the node at the key position
+	if (node == nullptr) { // if no entry found for the key
 		Node* newNode = new Node(bid, key); // assign this node to the key position
 		nodes.insert(nodes.begin() + key, (*newNode)); // Insert into the vector from the offset with the address of the node
 	}
-	else if (oldNode->key == UINT_MAX) { // else if node is not used but found
-		oldNode->key = key; // assing old node key to UNIT_MAX, set to key, set old node to bid and old node next to null pointer
-		oldNode->bid = bid;
-		oldNode->next = nullptr;
+	else if (node->key == UINT_MAX) { // else if node is not used but found
+		node->key = key; // assing old node key to UNIT_MAX, set to key, set old node to bid and old node next to null pointer
+		node->bid = bid;
+		node->next = nullptr;
 	}
 	else { // else find the next open node
-		while (oldNode->next != nullptr) { // Iterates through, stops when the last node is reached (next is nullptr)
-			oldNode = oldNode->next; // Make the next node the "current" node
+		while (node->next != nullptr) { // Iterates through, stops when the last node is reached (next is nullptr)
+			node = node->next; // Make the next node the "current" node
 		}
-		oldNode->next = new Node(bid, key); // add new newNode to end
+		node->next = new Node(bid, key); // add new newNode to end
 	}
 }
 
@@ -184,10 +184,8 @@ void HashTable::Remove(string bidId) {
  */
 Bid HashTable::Search(string bidId) {
 	Bid bid;
-
-	// FIXME (8): Implement logic to search for and return a bid
-
-	// create the key for the given bid
+	unsigned key = hash(atoi(bid.bidId.c_str())); // calculate and create the key for the given bid
+	
 	// if entry found for the key
 		 //return node bid
 
