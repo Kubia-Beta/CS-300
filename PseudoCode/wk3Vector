@@ -19,21 +19,33 @@ void verifyFile(string &filename){
 	string line
 	ifstream infile(filename)
 	regex fileFormatting("C.*\d+,\s*[A-Za-z].*") // Catches C, then any characeters, ends in a digit, comma, any letter
-	if (!infile){ // could not open, failbit
-		cerr << "error on file opening, make sure the program hass access to the directory"
-		throw runtime_error("File Access: Please verify the input file exists and is not protected")
-	} else if (file.good == false){ // Other file operating issue
-		throw runtime_error("Unknown File Access error")
-	}
-	while(getline(infile, line)){ // While reading line by line
-		if(line.find("CSC" || "Intro" || "100")  != string::npos) { // Do these common contents exist
-			if(line.substr(line.find("CSC" || "Intro" || "100") + 1).empty()){ // If it does exist, does anything exist after it
-				cerr << "Error in file formatting" // If not, we have a major problem
-				throw runtime_error("File Format: Error in file formatting")
+	try {
+		if (!infile){ // could not open, failbit
+			cerr << "error on file opening, make sure the program hass access to the directory" // Prints an error to the console
+			throw runtime_error("File Access: Please verify the input file exists and is not protected")
+		} else if (file.good == false){ // Other file operating issue
+			throw runtime_error("Unknown File Access error")
+		}
+		while(getline(infile, line)){ // While reading line by line
+			int i = 1
+			if(line.find("CSC" || "Intro" || "100")  != string::npos) { // Do these common contents exist
+				if(line.substr(line.find("CSC" || "Intro" || "100") + 1).empty()){ // If it does exist, does anything exist after it
+					cerr << "Error in file formatting" // If not, we have a major problem
+					throw runtime_error("File Format: Error in file formatting")
+				}
+			} else if(regex_match(line, fileFormatting) == false){ // File does not have the correct ordering of structure
+				cerr << "Error in file structure at line: " + i
+				throw runtime_error("Internal File Structure: error at line " + i)
 			}
-		} else if(
+		} // To get to this line, it must now be verified
+		infile.close() // We are done verifying, close the file
+		return
 	}
-	infile.close() // We are done verifying, close the file
+	catch(){
+		infile.close()
+		cerr << "Eror in file verification. Please check the console log."
+		return
+	}
 }
 
 // Open the file, read the data, parse each line, and check for file format errors
@@ -41,10 +53,8 @@ void openAndReadFile(string file, Vector<Course> courses) {
 	string filename = file
 	verifyFile(filename)
 	
-	
-	ifstream infile(filename)
 	try {
-		open file with filename // ifstream? Simplest from my memory
+		ifstream infile(filename)
 		if file.good() {
 			while (getline, line) {
 				read line from file, set to inLine // Delimiter? Have to see first
