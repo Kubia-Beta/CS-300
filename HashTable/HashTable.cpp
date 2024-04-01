@@ -56,17 +56,17 @@ private:
 
 		// default constructor
 		Node() {
-			key = UINT_MAX;
+			key = UINT_MAX; // 0xFFFFFFFF
 			next = nullptr;
 		}
 
 		// initialize with a bid
-		Node(Bid aBid) : Node() {
+		Node(Bid aBid) : Node() { // Calls the default constructor along with the new structure, minimalist design
 			bid = aBid;
 		}
 
 		// initialize with a bid and a key
-		Node(Bid aBid, unsigned int aKey) : Node(aBid) {
+		Node(Bid aBid, unsigned int aKey) : Node(aBid) { // Calls the bid constructor along with the new structure
 			key = aKey;
 		}
 	};
@@ -111,8 +111,7 @@ HashTable::HashTable(unsigned int size) {
  */
 HashTable::~HashTable() {
 	// FIXME (2): Implement logic to free storage when class is destroyed
-
-	// erase nodes beginning
+	nodes.erase(nodes.begin()); // erase nodes beginning
 }
 
 /**
@@ -126,7 +125,7 @@ HashTable::~HashTable() {
  */
 unsigned int HashTable::hash(int key) {
 	// FIXME (3): Implement logic to calculate a hash value
-	// return key tableSize
+	return key % tableSize; // return key tableSize
 }
 
 /**
@@ -136,10 +135,11 @@ unsigned int HashTable::hash(int key) {
  */
 void HashTable::Insert(Bid bid) {
 	// FIXME (5): Implement logic to insert a bid
-	// create the key for the given bid
-	// retrieve node using key
-	// if no entry found for the key
+	unsigned key = hash(atoi(bid.bidId.c_str())); // create the key for the given bid
+	Node* prevNode = &(nodes.at(key)); // retrieve node using key
+	if (prevNode == nullptr) { // if no entry found for the key
 		// assign this node to the key position
+	}
 	// else if node is not used
 		 // assing old node key to UNIT_MAX, set to key, set old node to bid and old node next to null pointer
 	// else find the next open node
@@ -265,6 +265,16 @@ double strToDouble(string str, char ch) {
 }
 
 /**
+ * Simple C function to clear the input buffer
+ * when we are done reading through cin
+ *
+ * Credit:  https://stackoverflow.com/a/257091/
+ */
+void clearInputBuffer() {
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+/**
  * The one and only main() method
  */
 int main(int argc, char* argv[]) {
@@ -304,6 +314,8 @@ int main(int argc, char* argv[]) {
 		cout << "  9. Exit" << endl;
 		cout << "Enter choice: ";
 		cin >> choice;
+		cout << endl; // By not passing endl, cout will have a line buffering issue.
+		clearInputBuffer();
 
 		switch (choice) {
 
