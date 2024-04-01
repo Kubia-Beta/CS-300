@@ -107,9 +107,12 @@ HashTable::HashTable(unsigned int size) {
 
 /**
  * Destructor
+ * 
+ * Guarantees that the memory will be freed by calling the destructor
  */
 HashTable::~HashTable() {
-	nodes.erase(nodes.begin());
+	// nodes.erase(nodes.begin()); // An option, incredibly inefficient
+	vector<Node> nodes; // By reassigning the vector, we deallocate the original vectors memory
 }
 
 /**
@@ -155,16 +158,12 @@ void HashTable::Insert(Bid bid) {
  * Print all bids
  */
 void HashTable::PrintAll() {
-	// FIXME (6): Implement logic to print all bids
 	for (unsigned int i = 0; i < nodes.size(); ++i) { // for node begin to end iterate
 		Node* current = &(nodes.at(i)); // Address of the first node passed to current
 		if (current->key != UINT_MAX && current != nullptr) {
 			cout << current->key << current->bid.bidId << ": " << current->bid.title
 				<< " | " << current->bid.amount << " | " << current->bid.fund << endl; // output key, bidID, title, amount and fund
 			current = current->next; // node is equal to next iter
-			// while node not equal to nullptr
-			   // output key, bidID, title, amount and fund
-			   // node is equal to next node
 		}
 	}
 	return;
@@ -176,7 +175,6 @@ void HashTable::PrintAll() {
  * @param bidId The bid id to search for
  */
 void HashTable::Remove(string bidId) {
-	// FIXME (7): Implement logic to remove a bid
 	unsigned key = hash(atoi(bidId.c_str())); // set key equal to hash atoi bidID cstring
 	nodes.erase(nodes.begin() + key); // erase node begin and key
 }
