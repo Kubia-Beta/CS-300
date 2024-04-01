@@ -1,0 +1,105 @@
+struct Course {
+	int courseNumber // Cast input line from string to int for fast comparisons
+	string courseTitle // Titles are strings
+	vector<int> coursePrerequisites /* Prerequisites are titles, which are we match to courseNumber
+	 * Size is n, where n>=0, so it needs to be dynamic (not an array)
+	 * Constant time access may be helpful here
+	 */
+	Course(int count, string title, vector prerequisites){ // Constructor
+		set courseNumber to count
+		set courseTitle to title
+		set coursePrerequisites to prerequisites
+	}
+}
+
+// Code based on ony of my own public repositories, Hold_to_Craft
+// https://github.com/Kubia-Beta/Hold_to_Craft
+void verifyFile(string &filename){
+	string inLine
+	string line
+	ifstream infile(filename)
+	regex fileFormatting("C.*\d+,\s*[A-Za-z].*") // Catches C, then any characeters, ends in a digit, comma, any letter
+	if (!infile){ // could not open, failbit
+		cerr << "error on file opening, make sure the program hass access to the directory"
+		throw runtime_error("File Access: Please verify the input file exists and is not protected")
+	} else if (file.good == false){ // Other file operating issue
+		throw runtime_error("Unknown File Access error")
+	}
+	while(getline(infile, line)){ // While reading line by line
+		if(line.find("CSC" || "Intro" || "100")  != string::npos) { // Do these common contents exist
+			if(line.substr(line.find("CSC" || "Intro" || "100") + 1).empty()){ // If it does exist, does anything exist after it
+				cerr << "Error in file formatting" // If not, we have a major problem
+				throw runtime_error("File Format: Error in file formatting")
+			}
+		} else if(
+	}
+	infile.close() // We are done verifying, close the file
+}
+
+// Open the file, read the data, parse each line, and check for file format errors
+void openAndReadFile(string file, Vector<Course> courses) {
+	string filename = file
+	verifyFile(filename)
+	
+	
+	ifstream infile(filename)
+	try {
+		open file with filename // ifstream? Simplest from my memory
+		if file.good() {
+			while (getline, line) {
+				read line from file, set to inLine // Delimiter? Have to see first
+				if number of parameters in line >= 2 {
+					if all prerequisites exist as courses in the file {
+						createCourseObjects(inLine) // Create Course object with extracted data
+					} else { // prerequisites do not exist in file
+						throw FileFormatException("Prerequisite course not found");
+					}
+				} else { // Paramater count must be less than 2
+					throw FileFormatException("Incorrect file format");
+				}
+			}
+			close file
+		} else {
+			throw FileOpenException("Unable to open file");
+		}
+	} catch (FileOpenException e) {
+		print error message
+		close file // Depending on method, it may be a stream and not just a literal file, so close it.
+	} catch (FileFormatException e) {
+		print error message
+		close file
+	}
+}
+
+
+
+// Create course objects and store them in the appropriate data structure
+void createCourseObjects(string line) {
+	string courseNumber to getline(',') // Grab the first line
+	string courseTitle to getline(',') // Now the second
+	string temp
+	vector<int> coursePrerequisites
+	// Now create the object
+	while(getline(','){
+		Grabs the rest of the line, adds to temp, then adds to prereq vector then loops
+	}
+	Course newCourse
+	set newCourse to hold courseNumber
+	set newCourse to hold courseTitle
+	set newCourse to hold coursePrerequisites
+	all through Course()
+}
+
+// Search the data structure for a specific course and print course information and prerequisites
+void searchAndPrintCourse(Vector<Course> courses, string courseNumber) {
+	for each course in courses {
+		if course.number == courseNumber {
+			print course information (number, title) // Call a separate print function instead?
+			for each prerequisite of the course {
+				print prerequisite course information (number, title)
+			}
+			return; // exit loop if course is found
+		}
+	}
+	print "Course not found";
+}

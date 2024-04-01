@@ -1,0 +1,61 @@
+struct Course {
+	int courseNumber
+	string courseTitle
+	vector<int> coursePrerequisites
+}
+
+
+struct Course {
+	int courseNumber // Cast input line from string to int for fast comparisons
+	string courseTitle // Titles are strings
+	vector<int> coursePrerequisites /* Prerequisites are titles, which are we match to courseNumber
+	 * Size is n, where n>=0, so it needs to be dynamic (not an array)
+	 * Constant time access may be helpful here
+	 */
+	Course(int count, string title, vector prerequisites){ // Constructor
+		set courseNumber to count
+		set courseTitle to title
+		set coursePrerequisites to prerequisites
+	}
+}
+
+void verifyFile(string &filename){
+	string inLine
+	string line
+	ifstream infile(filename)
+	regex fileFormatting("C.*\d+,\s*[A-Za-z].*") // Catches C, then any characeters, ends in a digit, comma, any letter
+	if (!infile){ // could not open, failbit
+		cerr << "error on file opening, make sure the program hass access to the directory"
+		throw runtime_error("File Access: Please verify the input file exists and is not protected")
+	} else if (file.good == false){ // Other file operating issue
+		throw runtime_error("Unknown File Access error")
+	}
+	while(getline(infile, line)){ // While reading line by line
+		if(line.find("CSC" || "Intro" || "100")  != string::npos) { // Do these common contents exist
+			if(line.substr(line.find("CSC" || "Intro" || "100") + 1).empty()){ // If it does exist, does anything exist after it
+				cerr << "Error in file formatting" // If not, we have a major problem
+				throw runtime_error("File Format: Error in file formatting")
+			}
+		} else if(
+	}
+	infile.close() // We are done verifying, close the file
+}
+
+// Open the file, read the data, parse each line, and check for file format errors
+void openAndReadFile(string file, Vector<Course> courses) {
+	string filename = file
+	verifyFile(filename)
+
+
+
+struct Node {
+	unsigned int key
+	Node next
+	
+	Node(){ // Default constructor
+		key = UINT_MAX
+		next = nullptr
+	}
+	
+	Node()
+	
