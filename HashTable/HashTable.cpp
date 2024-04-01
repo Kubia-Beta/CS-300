@@ -100,8 +100,8 @@ HashTable::HashTable() {
  * by reducing collisions without wasting memory.
  */
 HashTable::HashTable(unsigned int size) {
-	this->tableSize = size;// invoke local tableSize to size with this->
-	nodes.resize(tableSize);// resize nodes size
+	this->tableSize = size; // invoke local tableSize to size with this->
+	nodes.resize(tableSize); // resize nodes size
 }
 
 
@@ -156,14 +156,18 @@ void HashTable::Insert(Bid bid) {
  */
 void HashTable::PrintAll() {
 	// FIXME (6): Implement logic to print all bids
-	// for node begin to end iterate
-	//   if key not equal to UINT_MAx
-			// output key, bidID, title, amount and fund
-			// node is equal to next iter
+	for (unsigned int i = 0; i < nodes.size(); ++i) { // for node begin to end iterate
+		Node* current = &(nodes.at(i)); // Address of the first node passed to current
+		if (current->key != UINT_MAX && current != nullptr) {
+			cout << current->key << current->bid.bidId << ": " << current->bid.title
+				<< " | " << current->bid.amount << " | " << current->bid.fund << endl; // output key, bidID, title, amount and fund
+			current = current->next; // node is equal to next iter
 			// while node not equal to nullptr
 			   // output key, bidID, title, amount and fund
 			   // node is equal to next node
-
+		}
+	}
+	return;
 }
 
 /**
@@ -173,8 +177,8 @@ void HashTable::PrintAll() {
  */
 void HashTable::Remove(string bidId) {
 	// FIXME (7): Implement logic to remove a bid
-	// set key equal to hash atoi bidID cstring
-	// erase node begin and key
+	unsigned key = hash(atoi(bidId.c_str())); // set key equal to hash atoi bidID cstring
+	nodes.erase(nodes.begin() + key); // erase node begin and key
 }
 
 /**
@@ -302,7 +306,7 @@ int main(int argc, char* argv[]) {
 		break;
 	default:
 		csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
-		searchValue = "98109";
+		searchValue = "98190"; // 98109 is the default search
 	}
 
 	// Define a timer variable

@@ -5,6 +5,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{BE425706-8B9E-4510-A87F-D18776FCF9E0}|HashTable.vcxproj|C:\\Users\\gfloy\\source\\repos\\HashTable\\HashTable.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{BE425706-8B9E-4510-A87F-D18776FCF9E0}|HashTable.vcxproj|solutionrelative:HashTable.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BE425706-8B9E-4510-A87F-D18776FCF9E0}|HashTable.vcxproj|C:\\Users\\gfloy\\source\\repos\\HashTable\\CSVparser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BE425706-8B9E-4510-A87F-D18776FCF9E0}|HashTable.vcxproj|solutionrelative:CSVparser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -24,9 +28,22 @@
               "RelativeDocumentMoniker": "HashTable.cpp",
               "ToolTip": "C:\\Users\\gfloy\\source\\repos\\HashTable\\HashTable.cpp",
               "RelativeToolTip": "HashTable.cpp",
-              "ViewState": "AQIAAGQAAAAAAAAAAAAAAIwAAAApAAAA",
+              "ViewState": "AQIAABYBAAAADE92M5MZwDQBAAAWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-03-31T21:29:31.383Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CSVparser.cpp",
+              "DocumentMoniker": "C:\\Users\\gfloy\\source\\repos\\HashTable\\CSVparser.cpp",
+              "RelativeDocumentMoniker": "CSVparser.cpp",
+              "ToolTip": "C:\\Users\\gfloy\\source\\repos\\HashTable\\CSVparser.cpp",
+              "RelativeToolTip": "CSVparser.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-04-01T02:18:58.025Z",
               "EditorCaption": ""
             }
           ]
