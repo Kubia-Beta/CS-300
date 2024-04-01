@@ -132,7 +132,7 @@ unsigned int HashTable::hash(int key) {
  */
 void HashTable::Insert(Bid bid) {
 	unsigned key = hash(atoi(bid.bidId.c_str())); // Bid ID is converted to string of characters from string object, ascii to integer is then called, the key is now finalized
-
+	// Or put another way, we take the bidId, grab the c string, revert to int, call the hash for a key to have an index to the vector
 	Node* node = &(nodes.at(key)); // Gets the address of the node at the key position
 	if (node == nullptr) { // if no entry found for the key
 		Node* newNode = new Node(bid, key); // assign this node to the key position
@@ -184,18 +184,25 @@ void HashTable::Remove(string bidId) {
  */
 Bid HashTable::Search(string bidId) {
 	Bid bid;
-	unsigned key = hash(atoi(bid.bidId.c_str())); // calculate and create the key for the given bid
-	
-	// if entry found for the key
-		 //return node bid
+	unsigned key = hash(atoi(bidId.c_str())); // calculate and create the key for the given bid
+	Node* node = &(nodes.at(key));
 
-	// if no entry found for the key
-	  // return bid
-	// while node not equal to nullptr
-		// if the current node matches, return it
-		//node is equal to next node
-
-	return bid;
+	if (node != nullptr && node->key != UINT_MAX // if the entry exists AND is not unused
+		&& node->bid.bidId.compare(bidId) == 0) { // AND is matching to the searched bidId
+		return node->bid; //return node bid
+	}
+	else if (node == nullptr || node->key == UINT_MAX) { // if no entry found for the key OR it is unused
+		return bid;
+	}
+	else {
+		while (node != nullptr) { // while node not equal to nullptr
+			if (node->key != UINT_MAX && node->bid.bidId.compare(bidId) == 0) {// if the current node matches, return it
+				return node->bid;
+			}
+			node = node->next; // node is equal to next node
+		}
+		return bid; // if you fall out of while, return an empty bid
+	}
 }
 
 //============================================================================
