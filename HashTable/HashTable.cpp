@@ -92,8 +92,7 @@ public:
  */
 HashTable::HashTable() {
 	// FIXME (1): Initialize the structures used to hold bids
-
-	// Initalize node structure by resizing tableSize
+	nodes.resize(tableSize); // Initalize node structure by resizing tableSize
 }
 
 /**
@@ -102,8 +101,8 @@ HashTable::HashTable() {
  * by reducing collisions without wasting memory.
  */
 HashTable::HashTable(unsigned int size) {
-	// invoke local tableSize to size with this->
-	// resize nodes size
+	this->tableSize = size;// invoke local tableSize to size with this->
+	nodes.resize(tableSize);// resize nodes size
 }
 
 
