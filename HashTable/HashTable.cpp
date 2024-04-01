@@ -91,7 +91,6 @@ public:
  * Default constructor
  */
 HashTable::HashTable() {
-	// FIXME (1): Initialize the structures used to hold bids
 	nodes.resize(tableSize); // Initalize node structure by resizing tableSize
 }
 
@@ -110,8 +109,7 @@ HashTable::HashTable(unsigned int size) {
  * Destructor
  */
 HashTable::~HashTable() {
-	// FIXME (2): Implement logic to free storage when class is destroyed
-	nodes.erase(nodes.begin()); // erase nodes beginning
+	nodes.erase(nodes.begin());
 }
 
 /**
@@ -124,8 +122,7 @@ HashTable::~HashTable() {
  * @return The calculated hash
  */
 unsigned int HashTable::hash(int key) {
-	// FIXME (3): Implement logic to calculate a hash value
-	return key % tableSize; // return key tableSize
+	return key % tableSize;
 }
 
 /**
@@ -134,16 +131,24 @@ unsigned int HashTable::hash(int key) {
  * @param bid The bid to insert
  */
 void HashTable::Insert(Bid bid) {
-	// FIXME (5): Implement logic to insert a bid
-	unsigned key = hash(atoi(bid.bidId.c_str())); // create the key for the given bid
-	Node* prevNode = &(nodes.at(key)); // retrieve node using key
-	if (prevNode == nullptr) { // if no entry found for the key
-		// assign this node to the key position
+	unsigned key = hash(atoi(bid.bidId.c_str())); // Bid ID is converted to string of characters from string object, ascii to integer is then called, the key is now finalized
+
+	Node* oldNode = &(nodes.at(key)); // Gets the address of the node at the key position
+	if (oldNode == nullptr) { // if no entry found for the key
+		Node* newNode = new Node(bid, key); // assign this node to the key position
+		nodes.insert(nodes.begin() + key, (*newNode)); // Insert into the vector from the offset with the address of the node
 	}
-	// else if node is not used
-		 // assing old node key to UNIT_MAX, set to key, set old node to bid and old node next to null pointer
-	// else find the next open node
-			// add new newNode to end
+	else if (oldNode->key == UINT_MAX) { // else if node is not used but found
+		oldNode->key = key; // assing old node key to UNIT_MAX, set to key, set old node to bid and old node next to null pointer
+		oldNode->bid = bid;
+		oldNode->next = nullptr;
+	}
+	else { // else find the next open node
+		while (oldNode->next != nullptr) { // Iterates through, stops when the last node is reached (next is nullptr)
+			oldNode = oldNode->next; // Make the next node the "current" node
+		}
+		oldNode->next = new Node(bid, key); // add new newNode to end
+	}
 }
 
 /**
@@ -280,19 +285,19 @@ void clearInputBuffer() {
 int main(int argc, char* argv[]) {
 
 	// process command line arguments
-	string csvPath, bidKey;
+	string csvPath, searchValue;
 	switch (argc) {
 	case 2:
 		csvPath = argv[1];
-		bidKey = "98109";
+		searchValue = "98109";
 		break;
 	case 3:
 		csvPath = argv[1];
-		bidKey = argv[2];
+		searchValue = argv[2];
 		break;
 	default:
 		csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
-		bidKey = "98109";
+		searchValue = "98109";
 	}
 
 	// Define a timer variable
@@ -340,7 +345,7 @@ int main(int argc, char* argv[]) {
 		case 3:
 			ticks = clock();
 
-			bid = bidTable->Search(bidKey);
+			bid = bidTable->Search(searchValue);
 
 			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
 
@@ -348,7 +353,7 @@ int main(int argc, char* argv[]) {
 				displayBid(bid);
 			}
 			else {
-				cout << "Bid Id " << bidKey << " not found." << endl;
+				cout << "Bid Id " << searchValue << " not found." << endl;
 			}
 
 			cout << "time: " << ticks << " clock ticks" << endl;
@@ -356,7 +361,7 @@ int main(int argc, char* argv[]) {
 			break;
 
 		case 4:
-			bidTable->Remove(bidKey);
+			bidTable->Remove(searchValue);
 			break;
 		}
 	}
