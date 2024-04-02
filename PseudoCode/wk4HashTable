@@ -1,7 +1,7 @@
 struct Course { // Structure to hold course information
 	int courseNumber;
 	string courseTitle;
-	vector<int> coursePrerequisites;
+	vector<string> coursePrerequisites;
 	Course(){
 		courseNumber = INT_MAX; // INT_MAX for debugging
 	}
@@ -159,6 +159,24 @@ void openAndReadFile(string file, Vector<Course> courses) {
 	string line = "";
 	verifyFile(filename)
 	
-	ifstream infile(filename);
+	ifstream infile(filename)
+	
+	while (getline(infile, line)) {
+		istringstream iss(line)
+		string token
+		vector<string> tokens
+		
+		while (getline(iss, token, ',')) {
+			pushback(token)
+		}
+		
+		for (token size) {
+			coursePrerequisites.pushback(tokens[i])
+		}
+		Course course(number, title, prerequisites)
+		courses.pushback(course)
+	}
+	
+	infile.close()
 }
 
