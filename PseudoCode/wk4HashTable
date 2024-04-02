@@ -1,50 +1,127 @@
-const unsigned int DEFAULT_SIZE = 947; // Largest 3 digit prime as a default constant
-
 struct Course { // Structure to hold course information
 	int courseNumber;
 	string courseTitle;
 	vector<int> coursePrerequisites;
 	Course(){
-		courseNumber = INT_MAX;
+		courseNumber = INT_MAX; // INT_MAX for debugging
 	}
 }
 
-struct Node {
-	unsigned int key
-	Node* next;
-	Node* prev;
-	
-	Node(){ // Default constructor
-		key = UINT_MAX; // 0xFFFFFFFF
-		next = nullptr;
-		prev = nullptr;
-	}
-	
-	Node() : Node() { // Call the default constructor when calling the constructor
+class HashTable {
+	private:
+		const unsigned int DEFAULT_SIZE = 97; // Largest 2 digit prime as a default constant
 		
+		struct Node {
+			Course course
+			unsigned int key
+			Node* next; // Double link
+			Node* prev;
+	
+			Node(){ // Default constructor
+				key = UINT_MAX; // 0xFFFFFFFF
+				next = nullptr;
+				prev = nullptr;
+			}
+	
+			Node(Course aCourse) : Node() { // Call the default constructor when calling the constructor
+				course = aCourse;
+			}
+			
+			Node(Course Course, unsigned int aKey) : Node(Course Course) { // Continue calling previous constructors
+				key = aKey
+			}
+		}
+		
+		vector<Node> nodes;
+		unsigned int tableSize = DEFAULT_SIZE;
+		unsigned int Hash(int aKey);
+		
+	public:
+		HashTable();
+		HashTable(unsigned int size);
+		~HashTable();
+		bool IsEmpty() const;
+		void InsertItem(Course course, string item);
+		void RemoveItem(Course course);
+		Course SearchHash(Course course);
+		void PrintHash();
+}
+
+HashTable::HashTable() {
+	nodes.resize(tableSize);
+}
+
+HashTable::HashTable(unsigned int size) {
+	this->tableSize = size
+	nodes.resize(tableSize)
+}
+
+HashTable::~HashTable(){
+	// Node vector will deallocate itself when called here
+}
+
+int HashTable::Hash(int aKey) {
+	return aKey % tableSize
+}
+
+bool HashTable::IsEmpty(){
+	for (i < tableSize){ // Loop through the whole table
+		int sum = table.size();
+	}
+	if (the sum == 0){
+		return true;
+	else {
+		return false;
+	}
+}
+	
+void HashTable::InsertItem(Course course, string item) {
+	unsigned key = hash(course.courseNumber);
+	Node* node = &(nodes.at(key));
+	if (nullptr){
+		newNode = new Node(course, key)
+	}
+	else if (unused and found) {
+		node-> key, course equal to name of variable pointed to
+		next-> = nullptr
+	}
+	else {
+		while (we are not at last node) {
+			node = node->next // Make the next node the new current
+		}
+		node->next = new Node(course, key) // Add on the new node to the end
 	}
 }
 
+void HashTable::RemoveItem(Course course) { // Or would you pass courseNumber?
+	key = hash(course.courseNumber)
+	nodes.erase(nodes.begin() + key) // This structure worked in the hash table from before, double check though
+}
 
-struct Course {
-	int courseNumber // Cast input line from string to int for fast comparisons
-	string courseTitle // Titles are strings
-	vector<int> coursePrerequisites /* Prerequisites are titles, which are we match to courseNumber
-	 * Size is n, where n>=0, so it needs to be dynamic (not an array)
-	 * Constant time access may be helpful here
-	 */
-	Course(int count, string title, vector prerequisites){ // Constructor
-		set courseNumber to count
-		set courseTitle to title
-		set coursePrerequisites to prerequisites
+Course HashTable::SearchHash(int aKey) {
+	Course course
+	Node* node as address of node inside bucket
+	key = aKey
+	//fixme
+}
+
+void HashTable::PrintHash() {
+	for (size of nodes) {
+		while (current node is not null) {
+			if (current is not MAX flag) {
+				cout << course information from key
+			}
+			current = current->next
+		}
 	}
 }
+
 
 // Code based on ony of my own public repositories, Hold_to_Craft
 // https://github.com/Kubia-Beta/Hold_to_Craft
 void verifyFile(string &filename){
-	string inLine
-	string line
+	string inLine = ""
+	string line = ""
 	ifstream infile(filename)
 	regex fileFormatting("C.*\d+,\s*[A-Za-z].*") // Catches C, then any characeters, ends in a digit, comma, any letter
 	try {
@@ -76,10 +153,12 @@ void verifyFile(string &filename){
 	}
 }
 
-// Open the file, read the data, parse each line, and check for file format errors
+// Open the file, read the data, parse each line
 void openAndReadFile(string file, Vector<Course> courses) {
 	string filename = file
+	string line = "";
 	verifyFile(filename)
-
+	
+	ifstream infile(filename);
 }
 
