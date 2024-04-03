@@ -14,7 +14,7 @@ class HashTable {
 		struct Node {
 			Course course
 			unsigned int key
-			Node* next; // Double link
+			Node* next; // Double link?
 			Node* prev;
 	
 			Node(){ // Default constructor
@@ -102,7 +102,13 @@ Course HashTable::SearchHash(int aKey) {
 	Course course
 	Node* node as address of node inside bucket
 	key = aKey
-	//fixme
+	
+	while (node != nullptr) {
+		if (node->key != UINT_MAX && node->course.courseNumber == courseNumber) {
+			return node->course;
+		}
+		node = node->next
+	}
 }
 
 void HashTable::PrintHash() {
@@ -120,7 +126,7 @@ void HashTable::PrintHash() {
 // Code based on ony of my own public repositories, Hold_to_Craft
 // https://github.com/Kubia-Beta/Hold_to_Craft
 void verifyFile(string &filename){
-	string inLine = ""
+	string inLine = "" // Now unused comparison string? Keep for now for version control?
 	string line = ""
 	ifstream infile(filename)
 	regex fileFormatting("C.*\d+,\s*[A-Za-z].*") // Catches C, then any characeters, ends in a digit, comma, any letter
@@ -139,7 +145,7 @@ void verifyFile(string &filename){
 					throw runtime_error("File Format: Error in file formatting")
 				}
 			} else if(regex_match(line, fileFormatting) == false){ // File does not have the correct ordering of structure
-				cerr << "Error in file structure at line: " + i
+				cerr << "Error in file structure at line: " + i // show expected format in error?
 				throw runtime_error("Internal File Structure: error at line " + i)
 			}
 		} // To get to this line, it must now be verified
@@ -179,4 +185,3 @@ void openAndReadFile(string file, Vector<Course> courses) {
 	
 	infile.close()
 }
-
