@@ -122,6 +122,12 @@ void BinarySearchTree::PreOrder() {
  */
 void BinarySearchTree::Insert(Bid bid) {
 	// FIXME (5) Implement inserting a bid into the tree
+	if (root == nullptr) {
+		root = new Node(bid);
+	}
+	else {
+		this->addNode(root, bid);
+	}
 	// if root equarl to null ptr
 	  // root is equal to new node bid
 	// else
@@ -160,6 +166,20 @@ Bid BinarySearchTree::Search(string bidId) {
  */
 void BinarySearchTree::addNode(Node* node, Bid bid) {
 	// FIXME (8) Implement inserting a bid into the tree
+	if (node->bid.bidId.compare(bid.bidId) > 0) { // Left subtree
+		if (node->left == nullptr) { // If the left pointer is null
+			node->left = new Node(bid); // Construct a new node and make it the left pointer
+			// Isn't that supposed to be the tree left? Not node left? Check
+			// node->left = nullptr;
+			// node->right = nullptr;
+		}
+		else { //
+
+		}
+	}
+	else { // Right subtree
+
+	}
 	// if node is larger then add to left
 		// if no left node
 			// this node becomes left
