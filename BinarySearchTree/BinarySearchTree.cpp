@@ -172,11 +172,12 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
 		return node;
 	}
 	
-	int comparisonResult = node->bid.bidId.compare(bidId);
+	int comparisonResult = node->bid.bidId.compare(bidId); //FIXME: Tired, this does not look right? node->bid should be bid
 	const int matchFlag = 0; // Zero is a match, less is shorter/lower more is longer/higher
 	Node* parent = ParentSearch(node);
 
 	// Case 1: Internal node with 2 children
+	// FIXME: Case logic
 	if (node->left != nullptr && node->right != nullptr) {
 		Node* succNode = node->right;
 		Node* succParent = node;
@@ -198,15 +199,22 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
 	}
 	// Case 3: Internal with left child only
 	else if (node->left != nullptr) {
-		if (parent->left == node) { // Left child
-			parent->left = node->left; // Pointer has now jumped over node leftward
+		if (parent->left == node) { // Left child case
+			parent->left = node->left; // Pointer has now jumped over node
+		} // Is that a memory leak or is that handled by C++? Destroy node that was jumped over?
+		else { // Right child case
+			parent->right = node->left;
 		}
 	}
 	// Case 4: Internal with right child only OR leaf
 	else {
-
+		if (parent->left == node) {
+			parent->left = node->right;
+		}
+		else {
+			parent->right = node->right;
+		}
 	}
-
 
 	return node;
 }
