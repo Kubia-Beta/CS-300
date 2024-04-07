@@ -70,6 +70,7 @@ private:
 public:
 	BinarySearchTree();
 	virtual ~BinarySearchTree();
+	void deleteTree(Node* node);
 	void InOrder();
 	void Insert(Bid bid);
 	void Remove(string bidId);
@@ -86,10 +87,56 @@ BinarySearchTree::BinarySearchTree() {
 }
 
 /**
- * Destructor
+ * Destructor.
+ * Iterates through the BST and frees related Node memory with a helper function.
  */
 BinarySearchTree::~BinarySearchTree() {
-	// recurse from root deleting every node
+	deleteTree(root); // Recursive function helper
+	root = nullptr; // Called when all Node are deleted
+	// FIXME: Bid is of new type, no destructor? Could delete from reference? Not in scope? Uncertain.
+
+	/*
+	* The non-recursive method is almost completed here, but is a nightmare to manage. Recursion is far simpler.
+	* Don't do this. It does not matter how interesting it is. It is left here for the author's education.
+	Node* currNode = root;
+	Node* prevNode = root;
+	while (currNode != nullptr) { // Until the entire BST has been freed
+		if (root->left != nullptr) { // Traverse down and left as long as it exists
+			prevNode = currNode;
+			currNode = currNode->left;
+		}
+		else if (currNode->right != nullptr) { // Traverse down and right as long as it exists
+			prevNode = currNode;
+			currNode = currNode->right;
+		}
+		else if (currNode != nullptr && prevNode != nullptr) { // Only reached when left and right are null
+			delete currNode; // Frees the memory by destroying what currNode points to, delete[] only works on new types
+			currNode = prevNode; // stepback loop protocol
+		}
+		else { // Node is now a leaf
+			if (prevNode != nullptr) { // Node is not root
+				if (prevNode->left == currNode) { // Leftward traversal
+
+				}
+			}
+			else { // Logic exhausted, return to root
+
+			}
+			prevNode = root; // What we have pointed to must be gone, we can set them to nullptr safely
+			delete currNode;
+			currNode = root;
+		} // This will delete 3 Node before the final else is called is reset and iteration returns to root
+	} */
+}
+
+void BinarySearchTree::deleteTree(Node* node) {
+	if (node == nullptr) { // This feels incorrect, should only handle when the BST root is null?
+		return;
+	}
+
+	deleteTree(node->left); // Recursively call left until we cannot go left anymore
+	deleteTree(node->right); // Recursively call right until we canot go right anymore
+	delete node;
 }
 
 /**
@@ -235,6 +282,10 @@ void BinarySearchTree::preOrder(Node* node) {
 	  //output bidID, title, amount, fund
 	  //postOrder left
 	  //postOrder right      
+}
+
+Node* BinarySearchTree::removeNode(Node* node, string bidId) {
+	return nullptr;
 }
 
 //============================================================================
