@@ -1,22 +1,2 @@
 ﻿  BinarySearchTree.cpp
-C:\Users\gfloy\source\repos\BinarySearchTree\BinarySearchTree.cpp(151,24): error C2039: 'PostOrder': is not a member of 'BinarySearchTree'
-  C:\Users\gfloy\source\repos\BinarySearchTree\BinarySearchTree.cpp(61,7):
-  see declaration of 'BinarySearchTree'
-  
-C:\Users\gfloy\source\repos\BinarySearchTree\BinarySearchTree.cpp(159,24): error C2039: 'PreOrder': is not a member of 'BinarySearchTree'
-  C:\Users\gfloy\source\repos\BinarySearchTree\BinarySearchTree.cpp(61,7):
-  see declaration of 'BinarySearchTree'
-  
-C:\Users\gfloy\source\repos\BinarySearchTree\BinarySearchTree.cpp(260,24): error C2039: 'postOrder': is not a member of 'BinarySearchTree'
-  C:\Users\gfloy\source\repos\BinarySearchTree\BinarySearchTree.cpp(61,7):
-  see declaration of 'BinarySearchTree'
-  
-C:\Users\gfloy\source\repos\BinarySearchTree\BinarySearchTree.cpp(269,24): error C2039: 'preOrder': is not a member of 'BinarySearchTree'
-  C:\Users\gfloy\source\repos\BinarySearchTree\BinarySearchTree.cpp(61,7):
-  see declaration of 'BinarySearchTree'
-  
-  CSVparser.cpp
-C:\Users\gfloy\source\repos\BinarySearchTree\CSVparser.cpp(116,27): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\gfloy\source\repos\BinarySearchTree\CSVparser.cpp(121,26): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\gfloy\source\repos\BinarySearchTree\CSVparser.cpp(203,24): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
-  Generating Code...
+  BinarySearchTree.vcxproj -> C:\Users\gfloy\source\repos\BinarySearchTree\x64\Debug\BinarySearchTree.exe

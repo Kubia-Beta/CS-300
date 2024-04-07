@@ -64,7 +64,9 @@ private:
 	Node* root;
 
 	void addNode(Node* node, Bid bid);
-	void inOrderHelper(Node* node);
+	void InOrderHelper(Node* node);
+	void PreOrderHelper(Node* node);
+	void PostOrderHelper(Node* node);
 	Node* removeNode(Node* node, string bidId);
 
 public:
@@ -72,6 +74,8 @@ public:
 	virtual ~BinarySearchTree();
 	void BSTDestructorHelper(Node* node);
 	void InOrder();
+	void PostOrder();
+	void PreOrder();
 	void Insert(Bid bid);
 	void Remove(string bidId);
 	Bid Search(string bidId);
@@ -121,7 +125,7 @@ void BinarySearchTree::BSTDestructorHelper(Node* node) {
  */
 void BinarySearchTree::InOrder() { // This is a dangerous function naming scheme, consider distinct function names that will not break everything from a typo
 	// call inOrder fuction and pass root 
-	inOrderHelper(root);
+	this->InOrderHelper(root);
 }
 
 /**
@@ -129,6 +133,7 @@ void BinarySearchTree::InOrder() { // This is a dangerous function naming scheme
  */
 void BinarySearchTree::PostOrder() {
 	// FixMe (3): Post order root
+	this->PostOrderHelper(root);
 	// postOrder root
 }
 
@@ -137,6 +142,7 @@ void BinarySearchTree::PostOrder() {
  */
 void BinarySearchTree::PreOrder() {
 	// FixMe (4): Pre order root
+	PreOrderHelper(root);
 	// preOrder root
 }
 
@@ -295,12 +301,15 @@ void BinarySearchTree::addNode(Node* currNode, Bid bid) {
  *
  * @param node Current node in tree
  */
-void BinarySearchTree::inOrderHelper(Node* node) {
+void BinarySearchTree::InOrderHelper(Node* node) {
 	  // FixMe (9): Pre order root
-	if (node == nullptr) {
-
+	if (node != nullptr) {
+		InOrderHelper(node->left);
+		cout << node->bid.bidId << ": " << node->bid.title << " | " << node->bid.amount << " | "
+			<< node->bid.fund << endl;
+		InOrderHelper(node->right);
 	}
-
+	
 	  //if node is not equal to null ptr
 	  //InOrder not left
 	  //output bidID, title, amount, fund
@@ -420,7 +429,7 @@ int main(int argc, char* argv[]) {
 		break;
 	default:
 		csvPath = "eBid_Monthly_Sales_Dec_2016.csv";
-		bidKey = "98109";
+		bidKey = "98009";
 	}
 
 	// Define a timer variable
