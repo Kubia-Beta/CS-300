@@ -164,21 +164,25 @@ Bid BinarySearchTree::Search(string bidId) {
  * @param node Current node in tree
  * @param bid Bid to be added
  */
-void BinarySearchTree::addNode(Node* node, Bid bid) {
+void BinarySearchTree::addNode(Node* currNode, Bid bid) {
 	// FIXME (8) Implement inserting a bid into the tree
-	if (node->bid.bidId.compare(bid.bidId) > 0) { // Left subtree
-		if (node->left == nullptr) { // If the left pointer is null
-			node->left = new Node(bid); // Construct a new node and make it the left pointer
-			// Isn't that supposed to be the tree left? Not node left? Check
-			// node->left = nullptr;
-			// node->right = nullptr;
+	const int matchFlag = 0;
+	
+	if (currNode->bid.bidId.compare(bid.bidId) < matchFlag) { // Current node's bidID compared against bidID to be added
+		if (currNode->left == nullptr) { // Left subtree, if the string contained here is longer than or has a greater character value and left is null
+			currNode->left = new Node(bid); // Construct a new node and make it the left pointer of the current node
 		}
-		else { //
-
+		else { // Not null left
+			addNode(currNode->left, bid); // Recurse leftward
 		}
 	}
 	else { // Right subtree
-
+		if (currNode->right == nullptr) { // Greater and right is null
+			currNode->right = new Node(bid); // Node to be inserted becomes the right
+		}
+		else { // Not null right
+			addNode(currNode->right, bid); // Recurse rightward
+		}
 	}
 	// if node is larger then add to left
 		// if no left node
