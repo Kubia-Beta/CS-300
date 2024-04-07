@@ -172,50 +172,39 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
 		return node;
 	}
 	
-	int comparisonResult = node->bid.bidId.compare(bidId); //FIXME: Tired, this does not look right? node->bid should be bid
+	int comparisonResult = node->bid.bidId.compare(bidId); // target bidId compared to searched bidId
 	const int matchFlag = 0; // Zero is a match, less is shorter/lower more is longer/higher
 	Node* parent = ParentSearch(node);
 
-	// Case 1: Internal node with 2 children
-	// FIXME: Case logic
-	if (node->left != nullptr && node->right != nullptr) {
-		Node* succNode = node->right;
-		Node* succParent = node;
-		while (succNode->left != nullptr) { // Traverse left
-			succParent = succNode;
-			succNode = succNode->left;
-		}
-		node = succNode; // Copy the successor into the node
-		removeNode(succNode, succNode->bid.bidId); // Recursively remove successor since it was copied
+	if (comparisonResult > 0) { // target is larger
+		node->left = removeNode(node->left, bidId); // Recurse down and replace the removed node
 	}
-	// Case 2: Root node (with 1 or 0 children)
-	else if (node == root) {
-		if (node->left != nullptr) {
-			root = node->left; // When the left is the only target, shift root to it
-		}
-		else {
-			root = node->right; // When right is the only target, shift root to it
-		}
+	else if (comparisonResult < 0) { // searched is larger
+		node->right = removeNode(node->right, bidId);
 	}
-	// Case 3: Internal with left child only
-	else if (node->left != nullptr) {
-		if (parent->left == node) { // Left child case
-			parent->left = node->left; // Pointer has now jumped over node
-		} // Is that a memory leak or is that handled by C++? Destroy node that was jumped over?
-		else { // Right child case
-			parent->right = node->left;
-		}
-	}
-	// Case 4: Internal with right child only OR leaf
 	else {
-		if (parent->left == node) {
-			parent->left = node->right;
+		if (node->left == nullptr && node->right == nullptr) { // leaf case
+			delete node;
+			node = nullptr; // Keep the pointer safe
 		}
-		else {
-			parent->right = node->right;
+		else if (node->left != nullptr && node->right == nullptr) { // Right is null case ("Case 4")
+			Node* temp = node;
+			node = node->left;
+			delete temp;
+		}
+		else if (node->left == nullptr && node->right != nullptr) { // Left is null case ("Case 3")
+			Node* temp = node;
+			node = node->right;
+		}
+		else { // Two children case ("Case 1")
+			Node* succNode = node->right;
+			while (succNode->left != nullptr) {  // Traverse left
+				succNode = succNode->left;
+			}
+			node->bid = succNode->bid;
+			node->right = removeNode(node->right, succNode->bid.bidId); // Recursively remove successor since it was copied
 		}
 	}
-
 	return node;
 }
 
