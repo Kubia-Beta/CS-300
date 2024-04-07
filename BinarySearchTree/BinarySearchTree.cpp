@@ -75,6 +75,7 @@ public:
 	void Insert(Bid bid);
 	void Remove(string bidId);
 	Bid Search(string bidId);
+	Node* ParentSearch(Node* child);
 };
 
 /**
@@ -173,25 +174,33 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
 	
 	int comparisonResult = node->bid.bidId.compare(bidId);
 	const int matchFlag = 0; // Zero is a match, less is shorter/lower more is longer/higher
+	Node* parent = ParentSearch(node);
 
 	// Case 1: Internal node with 2 children
 	if (node->left != nullptr && node->right != nullptr) {
 		Node* succNode = node->right;
 		Node* succParent = node;
-		while (succNode->left != nullptr) {
+		while (succNode->left != nullptr) { // Traverse left
 			succParent = succNode;
 			succNode = succNode->left;
 		}
 		node = succNode; // Copy the successor into the node
-		removeNode(succNode, succNode->bid.bidId); // Recursively remove successor
+		removeNode(succNode, succNode->bid.bidId); // Recursively remove successor since it was copied
 	}
 	// Case 2: Root node (with 1 or 0 children)
 	else if (node == root) {
-
+		if (node->left != nullptr) {
+			root = node->left; // When the left is the only target, shift root to it
+		}
+		else {
+			root = node->right; // When right is the only target, shift root to it
+		}
 	}
 	// Case 3: Internal with left child only
 	else if (node->left != nullptr) {
-
+		if (parent->left == node) { // Left child
+			parent->left = node->left; // Pointer has now jumped over node leftward
+		}
 	}
 	// Case 4: Internal with right child only OR leaf
 	else {
@@ -209,7 +218,6 @@ Node* BinarySearchTree::removeNode(Node* node, string bidId) {
  */
 Bid BinarySearchTree::Search(string bidId) {
 	Node* currNode = root;
-	bool found = false;
 	const int matchFlag = 0; // Zero is a match, less is shorter/lower more is longer/higher
 
 	while (currNode != nullptr) {
@@ -227,6 +235,34 @@ Bid BinarySearchTree::Search(string bidId) {
 
 	Bid bid;
 	return bid;
+}
+
+/**
+ * Search for a parent.
+ *
+ * @param Node* node to be searched for.
+ */
+Node* BinarySearchTree::ParentSearch(Node* child) {
+	Node* currNode = root;
+	Node* parentNode = root;
+	const int matchFlag = 0;
+
+	while (currNode != nullptr) {
+		int comparisonResult = currNode->bid.bidId.compare(parentNode->bid.bidId); // Compare the search bidId against the currently held parent bidId
+		if (currNode == child) { // Found the child
+			return parentNode; // Return the currently held parent that points to the child
+		}
+		else if (comparisonResult < matchFlag) { // The check is less than what was checked against
+			parentNode = currNode; // Move the parent
+			currNode = currNode->left; // Shift loop left
+		}
+		else { // current > bidId checked against
+			parentNode = currNode; // Move the parent
+			currNode = currNode->right; // Shift loop right
+		} // Continue looping
+	}
+	cout << "\nParent() failed to find child" << endl; // Child not found, something deeply wrong has happened
+	return nullptr;
 }
 
 /**
