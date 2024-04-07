@@ -1,9 +1,9 @@
 //============================================================================
 // Name        : BinarySearchTree.cpp
-// Author      : JYour name
+// Author      : Connor Sculthorpe
 // Version     : 1.0
 // Copyright   : Copyright © 2017 SNHU COCE
-// Description : Hello World in C++, Ansi-style
+// Description : Bid handling system, BST style
 //============================================================================
 
 #include <iostream>
@@ -148,7 +148,22 @@ void BinarySearchTree::Remove(string bidId) {
 Bid BinarySearchTree::Search(string bidId) {
 	// FIXME (7) Implement searching the tree for a bid
 	// set current node equal to root
+	Node* currNode = root;
+	bool found = false;
+	const int matchFlag = 0; // Zero is a match
 
+	while (true) {
+		int comparisonResult = currNode->bid.bidId.compare(bidId);
+		if (comparisonResult == matchFlag) { // Found the bid
+			return currNode->bid; // Return the currently held bid that matched
+		}
+		else if (comparisonResult < matchFlag) { // The check is less than what was checked against
+			currNode = currNode->left; // Shift loop left
+		}
+		else { // current > bidId checked against
+			currNode = currNode->right; // Shift loop right
+		} // Continue looping
+	}
 	// keep looping downwards until bottom reached or matching bidId found
 		// if match found, return current bid
 
@@ -166,7 +181,7 @@ Bid BinarySearchTree::Search(string bidId) {
  */
 void BinarySearchTree::addNode(Node* currNode, Bid bid) {
 	// FIXME (8) Implement inserting a bid into the tree
-	const int matchFlag = 0;
+	const int matchFlag = 0; // Zero is a match
 	
 	if (currNode->bid.bidId.compare(bid.bidId) < matchFlag) { // Current node's bidID compared against bidID to be added
 		if (currNode->left == nullptr) { // Left subtree, if the string contained here is longer than or has a greater character value and left is null
@@ -196,6 +211,10 @@ void BinarySearchTree::addNode(Node* currNode, Bid bid) {
 }
 void BinarySearchTree::inOrder(Node* node) {
 	  // FixMe (9): Pre order root
+	if (node == nullptr) {
+
+	}
+
 	  //if node is not equal to null ptr
 	  //InOrder not left
 	  //output bidID, title, amount, fund
