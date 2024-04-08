@@ -10,12 +10,10 @@ struct Course { // Structure to hold course information
 class BST {
 	struct Node {
 	Course course
-	unsigned int key
 	Node* left;
 	Node* right;
 
 	Node(){ // Default constructor
-		key = UINT_MAX; // 0xFFFFFFFF
 		left = nullptr;
 		right = nullptr;
 	}
@@ -23,13 +21,10 @@ class BST {
 	Node(Course aCourse) : Node() { // Call the default constructor when calling the constructor
 		course = aCourse;
 	}
-	
-	Node(Course Course, unsigned int aKey) : Node(Course Course) { // Continue calling previous constructors
-		key = aKey
-	}
 }
 	private:
 		Node* root;
+		void addNode(Course course);
 		void addNode(Node* node, Course course);
 		void InOrderHelper(Node* node);
 		void PreOrderHelper(Node* node);
@@ -46,17 +41,64 @@ class BST {
 		void Insert(Course course);
 		void remove (int courseNumber);
 		Course Search(int courseNumber);
-		int Size();
-		
-		
-		bool IsEmpty() const;
-		void InsertItem(Course course, string item);
-		void RemoveItem(Course course);
-		Course SearchHash(Course course);
-		void PrintHash();
 }
 
+void BST::addNode(Course course){
+	add(&(this->root), course) // Add by passing the root as reference since node was not specified
+}
 
+void BST::addNode(Node* node, Course course){
+	
+}
+
+void BST::InOrderHelper(Node* node){
+	
+}
+
+void BST::PreOrderHelper(Node* node){
+	
+}
+
+void BST::PostOrderHelper(Node* node){
+	
+}
+
+BST::BST(){
+	this->root = nullptr;
+	this->TreeSize = 0;
+}
+
+virtual ~BST(){
+	deleteTree(this->root);
+}
+
+void BST::InOrder(){
+	
+}
+
+void BST::PostOrder(){
+	
+}
+
+void BST::PreOrder(){
+	
+}
+
+void BST::Insert(Course course){
+	
+}
+
+void BST::remove (int courseNumber){
+	
+}
+
+Course BST::Search(int courseNumber){
+	
+}
+
+int BST::Size(){
+	return this->TreeSize;
+}
 
 
 // Code based on ony of my own public repositories, Hold_to_Craft
@@ -86,7 +128,7 @@ void verifyFile(string &filename){
 			} else if(regex_match(line, fileFormatting) == false){ // Uses a regex to find any class, if we do not find it:
 				throw runtime_error("Internal File Structure: error at line " + i
 				+ ". Class naming convention is incorrect and could not be read."
-				+ "Expected type: CSCI100,Introduction...");
+				+ "Expected type: CSCI100,Introduction to Computer Science");
 			}
 			++i; // Increase the line counter each time while() finishes a loop
 		} // To get to this line, it must now be verified
@@ -95,18 +137,17 @@ void verifyFile(string &filename){
 	}
 	catch(){ // Something went wrong
 		infile.close()
-		cerr << "Eror in file verification. Please check the console log."
+		cerr << "Error in file verification. Please check the console log."
 		return
 	}
 }
 
 // Open the file, read the data, parse each line
 void openAndReadFile(string file, Vector<Course> courses) {
-	string filename = file
 	string line = "";
-	verifyFile(filename)
+	verifyFile(file)
 	
-	ifstream infile(filename)
+	ifstream infile(file)
 	
 	while (getline(infile, line)) {
 		istringstream iss(line)
