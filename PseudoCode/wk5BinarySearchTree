@@ -24,7 +24,6 @@ class BST {
 }
 	private:
 		Node* root;
-		void addNode(Course course);
 		void addNode(Node* node, Course course);
 		void InOrderHelper(Node* node);
 		void PreOrderHelper(Node* node);
@@ -43,12 +42,25 @@ class BST {
 		Course Search(int courseNumber);
 }
 
-void BST::addNode(Course course){
-	add(&(this->root), course) // Add by passing the root as reference since node was not specified
-}
-
 void BST::addNode(Node* node, Course course){
-	
+	if (node->course.courseNumber > course.courseNumber){ // If the existing course number is greater than the one to be inserted
+		if (node->left == nullptr) { // Left subtree has no lesser node
+			node->left = new Node(course); // Construct a new node and make it the left pointer of the current node
+			this->TreeSize = this->TreeSize + 1; // Tree size has increased by one node
+		}
+		else { // Left not nullptr, exists
+			addNode(node->left, course); // Recurse leftward
+		}
+	}
+	else { // Existing course number is less than the one to be inserted
+		if (node->right == nullptr){ // Right subtree has no lesser node
+			node->right = new Node(course); // Construct a new node and make it the right pointer of the current node
+			this->TreeSize = this->TreeSize + 1; // Tree size has increased by one node
+		}
+		else { // Right nmot nullptr, exists
+			addNode(node->right, course); // Recurse rightward
+		}
+	}
 }
 
 void BST::InOrderHelper(Node* node){
@@ -85,7 +97,12 @@ void BST::PreOrder(){
 }
 
 void BST::Insert(Course course){
-	
+	if (root == nullptr){ // Root does not exist
+		root = new Node(course); // Make the new node root
+	}
+	else {
+		addNode(&(this->root), course) // Add by passing the root as reference since node was not specified
+	}
 }
 
 void BST::remove (int courseNumber){

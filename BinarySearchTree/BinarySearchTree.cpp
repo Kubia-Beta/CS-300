@@ -273,7 +273,7 @@ Node* BinarySearchTree::ParentSearch(Node* child) {
 void BinarySearchTree::addNode(Node* node, Bid bid) {
 	
 	const int matchFlag = 0; // Zero is a match
-	int comparisonResult = node->bid.bidId.compare(bid.bidId);
+	int comparisonResult = node->bid.bidId.compare(bid.bidId); // Compare the strings of the node and the input bid
 	
 	if (comparisonResult < matchFlag) { // Current node's bidID compared against bidID to be added
 		if (node->left == nullptr) { // Left subtree, if the string contained here is longer than or has a greater character value and left is null
