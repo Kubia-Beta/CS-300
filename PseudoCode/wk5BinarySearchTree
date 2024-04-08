@@ -1,0 +1,128 @@
+struct Course { // Structure to hold course information
+	int courseNumber;
+	string courseTitle;
+	vector<string> coursePrerequisites;
+	Course(){
+		courseNumber = INT_MAX; // INT_MAX for debugging
+	}
+}
+
+class BST {
+	struct Node {
+	Course course
+	unsigned int key
+	Node* left;
+	Node* right;
+
+	Node(){ // Default constructor
+		key = UINT_MAX; // 0xFFFFFFFF
+		left = nullptr;
+		right = nullptr;
+	}
+
+	Node(Course aCourse) : Node() { // Call the default constructor when calling the constructor
+		course = aCourse;
+	}
+	
+	Node(Course Course, unsigned int aKey) : Node(Course Course) { // Continue calling previous constructors
+		key = aKey
+	}
+}
+	private:
+		Node* root;
+		void addNode(Node* node, Course course);
+		void InOrderHelper(Node* node);
+		void PreOrderHelper(Node* node);
+		void PostOrderHelper(Node* node);
+		Node* removeNode(Node* node, int courseNumber);
+		int TreeSize;
+	
+	public:
+		BST();
+		virtual ~BST();
+		void InOrder();
+		void PostOrder();
+		void PreOrder();
+		void Insert(Course course);
+		void remove (int courseNumber);
+		Course Search(int courseNumber);
+		int Size();
+		
+		
+		bool IsEmpty() const;
+		void InsertItem(Course course, string item);
+		void RemoveItem(Course course);
+		Course SearchHash(Course course);
+		void PrintHash();
+}
+
+
+
+
+// Code based on ony of my own public repositories, Hold_to_Craft
+// https://github.com/Kubia-Beta/Hold_to_Craft
+void verifyFile(string &filename){
+	string line = ""; // Comparison string, starts as empty
+	ifstream infile(filename) // Open the file
+	regex fileFormatting("C.*\d+,\s*[A-Za-z].*") // Catches C, then any characeters, ends in a digit, comma, any letter
+	try {
+		if (!infile){ // could not open, failbit. We may not have access, or the file may not exist.
+			throw runtime_error("File Access: Please verify the input file exists and is not protected")
+		} else if (file.good == false){ // Other file operating issue
+			throw runtime_error("Unknown File Access error")
+		}
+		while(getline(infile, line)){ // While reading line by line
+			int i = 1 // Do these common contents exist, check with npos which will count
+			if(line.find("CSC" != string::npos) || // Checks for common contents and compares them to "no position"
+			  (line.find("Intro" != string::npos) || // If all three equal npos, then none were found
+			  (line.find("100" != string::npos) ||{ // In short, we check for these three markers for valid formatting line by line
+			  
+				if(line.substr(line.find("CSC") + 1).empty()) || // Look ahead by 1 position after finding this string.
+				line.substr(line.find("Intro")+ 1).empty() || // If anything is read after these terms,
+				line.substr(line.find("100")+ 1).empty() { // then the file must be following the correct format.
+					// If no characters are found after finding the search strings, then:
+					throw runtime_error("File Format: Class names are of an incorrect format");
+				}
+			} else if(regex_match(line, fileFormatting) == false){ // Uses a regex to find any class, if we do not find it:
+				throw runtime_error("Internal File Structure: error at line " + i
+				+ ". Class naming convention is incorrect and could not be read."
+				+ "Expected type: CSCI100,Introduction...");
+			}
+			++i; // Increase the line counter each time while() finishes a loop
+		} // To get to this line, it must now be verified
+		infile.close() // We are done verifying, close the file
+		return
+	}
+	catch(){ // Something went wrong
+		infile.close()
+		cerr << "Eror in file verification. Please check the console log."
+		return
+	}
+}
+
+// Open the file, read the data, parse each line
+void openAndReadFile(string file, Vector<Course> courses) {
+	string filename = file
+	string line = "";
+	verifyFile(filename)
+	
+	ifstream infile(filename)
+	
+	while (getline(infile, line)) {
+		istringstream iss(line)
+		string token
+		vector<string> tokens
+		
+		while (getline(iss, token, ',')) {
+			pushback(token)
+		}
+		
+		for (token size) {
+			coursePrerequisites.pushback(tokens[i])
+		}
+		Course course(number, title, prerequisites)
+		courses.pushback(course)
+	}
+	
+	infile.close()
+}
