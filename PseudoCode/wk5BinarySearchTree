@@ -42,6 +42,7 @@ class BST {
 		Course Search(int courseNumber);
 }
 
+// Adds a node with course to the tree
 void BST::addNode(Node* node, Course course){
 	if (node->course.courseNumber > course.courseNumber){ // If the existing course number is greater than the one to be inserted
 		if (node->left == nullptr) { // Left subtree has no lesser node
@@ -63,13 +64,35 @@ void BST::addNode(Node* node, Course course){
 	}
 }
 
-void BST::InOrderHelper(Node* node){
-	
+// Passes root to the helper function
+void BST::InOrder(){
+	this->InOrderHelper(root);
 }
 
-void BST::PreOrderHelper(Node* node){
-	
+// Input node is printed in order with the entire tree (recursive)
+void BST::InOrderHelper(Node* node){
+	if (node != nullptr) {
+		InOrderHelper(node->left); // Recurse leftward to print all items before
+		cout << node->course.courseNumber << ": " << node->Course.courseTitle << " | "
+		<< node.Course.coursePrerequisites << endl;
+		InOrderHelper(node->right); // Now recurse rightward now that we have printed all nodes to the left and the input node
+	}
 }
+
+void BST::PreOrder(){
+	this->PreOrderHelper(root);
+}
+
+// Input node is printed before the tree (recursive)
+void BST::PreOrderHelper(Node* node){
+	if (node != nullptr){
+		cout << node->course.courseNumber << ": " << node->Course.courseTitle << " | "
+		<< node.Course.coursePrerequisites << endl;
+		
+	}
+}
+
+
 
 void BST::PostOrderHelper(Node* node){
 	
@@ -84,17 +107,13 @@ virtual ~BST(){
 	deleteTree(this->root);
 }
 
-void BST::InOrder(){
-	
-}
+
 
 void BST::PostOrder(){
 	
 }
 
-void BST::PreOrder(){
-	
-}
+
 
 void BST::Insert(Course course){
 	if (root == nullptr){ // Root does not exist
