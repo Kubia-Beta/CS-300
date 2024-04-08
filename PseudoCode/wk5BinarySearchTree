@@ -65,11 +65,12 @@ void BST::addNode(Node* node, Course course){
 }
 
 // Passes root to the helper function
+// Traverse left, visit root, traverse right (recursive)
 void BST::InOrder(){
 	this->InOrderHelper(root);
 }
 
-// Input node is printed in order with the entire tree (recursive)
+// Traverse left, visit root, traverse right (recursive)
 void BST::InOrderHelper(Node* node){
 	if (node != nullptr) {
 		InOrderHelper(node->left); // Recurse leftward to print all items before
@@ -79,42 +80,50 @@ void BST::InOrderHelper(Node* node){
 	}
 }
 
+// Passes root to the helper function
+// Visit root, traverse left, traverse right (recursive)
 void BST::PreOrder(){
 	this->PreOrderHelper(root);
 }
 
-// Input node is printed before the tree (recursive)
+// Visit root, traverse left, traverse right (recursive)
 void BST::PreOrderHelper(Node* node){
 	if (node != nullptr){
 		cout << node->course.courseNumber << ": " << node->Course.courseTitle << " | "
 		<< node.Course.coursePrerequisites << endl;
-		
+		PreOrderHelper(node->left);
+		PreOrderHelper(node->right);
 	}
 }
 
-
-
-void BST::PostOrderHelper(Node* node){
-	
+// Passes root to the helper function
+// Traverse left, traverse right, visit root (recursive)
+void BST::PostOrder(){
+	this->PostOrderHelper(root);
 }
 
+// Traverse left, traverse right, visit root (recursive)
+void BST::PostOrderHelper(Node* node){
+	if (node != nullptr){
+		cout << node->course.courseNumber << ": " << node->Course.courseTitle << " | "
+		<< node.Course.coursePrerequisites << endl;
+		PostOrderHelper(node->left);
+		PostOrderHelper(node->right);
+	}
+}
+
+// Default constructor
 BST::BST(){
 	this->root = nullptr;
 	this->TreeSize = 0;
 }
 
+// Destructor
 virtual ~BST(){
 	deleteTree(this->root);
 }
 
-
-
-void BST::PostOrder(){
-	
-}
-
-
-
+// Insert a course
 void BST::Insert(Course course){
 	if (root == nullptr){ // Root does not exist
 		root = new Node(course); // Make the new node root
@@ -124,18 +133,20 @@ void BST::Insert(Course course){
 	}
 }
 
+// Remove a course
 void BST::remove (int courseNumber){
 	
 }
 
+// Find a course
 Course BST::Search(int courseNumber){
 	
 }
 
+// Get the size of the current Binary Search Tree
 int BST::Size(){
 	return this->TreeSize;
 }
-
 
 // Code based on ony of my own public repositories, Hold_to_Craft
 // https://github.com/Kubia-Beta/Hold_to_Craft
@@ -145,28 +156,37 @@ void verifyFile(string &filename){
 	regex fileFormatting("C.*\d+,\s*[A-Za-z].*") // Catches C, then any characeters, ends in a digit, comma, any letter
 	try {
 		if (!infile){ // could not open, failbit. We may not have access, or the file may not exist.
-			throw runtime_error("File Access: Please verify the input file exists and is not protected")
+			throw runtime_error("File Access: Please verify the input file " + filename // Output what file went wrong with the error
+			+ " exists and is not protected.");
 		} else if (file.good == false){ // Other file operating issue
-			throw runtime_error("Unknown File Access error")
+			throw runtime_error("Unknown File Access error on file " + filename + ".");
 		}
 		while(getline(infile, line)){ // While reading line by line
-			int i = 1 // Do these common contents exist, check with npos which will count
+			int currLine = 1 // keep track of which line may throw an error for debugging
+			
+			// Begin verifying each line of the document:
+			// Target format: "CSCI100,Introduction to Computer Science"
 			if(line.find("CSC" != string::npos) || // Checks for common contents and compares them to "no position"
 			  (line.find("Intro" != string::npos) || // If all three equal npos, then none were found
 			  (line.find("100" != string::npos) ||{ // In short, we check for these three markers for valid formatting line by line
-			  
+				
+				// Components exist, is the formatting consistent with "CSCI100"
 				if(line.substr(line.find("CSC") + 1).empty()) || // Look ahead by 1 position after finding this string.
 				line.substr(line.find("Intro")+ 1).empty() || // If anything is read after these terms,
 				line.substr(line.find("100")+ 1).empty() { // then the file must be following the correct format.
-					// If no characters are found after finding the search strings, then:
-					throw runtime_error("File Format: Class names are of an incorrect format");
+					// If no characters are found in the position after search strings, then:
+					throw runtime_error("File Format: Error at line: " + currLine // Add the error line in the document to the error
+					+ "Class names are of an incorrect format."
+					+ " Expected type: CSCI100.");
 				}
+				
 			} else if(regex_match(line, fileFormatting) == false){ // Uses a regex to find any class, if we do not find it:
-				throw runtime_error("Internal File Structure: error at line " + i
+				throw runtime_error("Internal File Structure: error at line " + currLine // Add the error line in the document to the error
 				+ ". Class naming convention is incorrect and could not be read."
 				+ "Expected type: CSCI100,Introduction to Computer Science");
 			}
-			++i; // Increase the line counter each time while() finishes a loop
+			
+			++currLine; // Increase the line counter each time while() finishes a loop
 		} // To get to this line, it must now be verified
 		infile.close() // We are done verifying, close the file
 		return
@@ -181,25 +201,25 @@ void verifyFile(string &filename){
 // Open the file, read the data, parse each line
 void openAndReadFile(string file, Vector<Course> courses) {
 	string line = "";
-	verifyFile(file)
+	verifyFile(file);
 	
-	ifstream infile(file)
+	ifstream infile(file);
 	
 	while (getline(infile, line)) {
-		istringstream iss(line)
-		string token
-		vector<string> tokens
+		istringstream iss(line);
+		string token;
+		vector<string> tokens;
 		
 		while (getline(iss, token, ',')) {
-			pushback(token)
+			pushback(token);
 		}
 		
 		for (token size) {
-			coursePrerequisites.pushback(tokens[i])
+			coursePrerequisites.pushback(tokens[i]);
 		}
-		Course course(number, title, prerequisites)
-		courses.pushback(course)
+		Course course(number, title, prerequisites);
+		courses.pushback(course);
 	}
 	
-	infile.close()
+	infile.close();
 }
