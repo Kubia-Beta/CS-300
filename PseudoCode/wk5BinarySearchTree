@@ -28,6 +28,7 @@ class BST {
 		void InOrderHelper(Node* node);
 		void PreOrderHelper(Node* node);
 		void PostOrderHelper(Node* node);
+		void deleteTree(Node* node);
 		Node* removeNode(Node* node, int courseNumber);
 		int TreeSize;
 	
@@ -38,11 +39,16 @@ class BST {
 		void PostOrder();
 		void PreOrder();
 		void Insert(Course course);
-		void remove (int courseNumber);
+		void Remove (int courseNumber);
 		Course Search(int courseNumber);
 }
 
-// Adds a node with course to the tree
+ /**
+  * Adds a node with course to the tree
+  *
+  * @param Node* node to be referenced from
+  * @param Course course to be added
+  */
 void BST::addNode(Node* node, Course course){
 	if (node->course.courseNumber > course.courseNumber){ // If the existing course number is greater than the one to be inserted
 		if (node->left == nullptr) { // Left subtree has no lesser node
@@ -64,13 +70,22 @@ void BST::addNode(Node* node, Course course){
 	}
 }
 
-// Passes root to the helper function
-// Traverse left, visit root, traverse right (recursive)
+ /**
+  * Passes root to the helper function
+  * Recursively traverse left, visit root, traverse right
+  *
+  * @param Node* node to be displayed
+  */
 void BST::InOrder(){
 	this->InOrderHelper(root);
 }
 
-// Traverse left, visit root, traverse right (recursive)
+ /**
+  * Passes root to the helper function
+  * Recursively traverse left, visit root, traverse right
+  *
+  * @param Node* node to be displayed
+  */
 void BST::InOrderHelper(Node* node){
 	if (node != nullptr) {
 		InOrderHelper(node->left); // Recurse leftward to print all items before
@@ -80,13 +95,19 @@ void BST::InOrderHelper(Node* node){
 	}
 }
 
-// Passes root to the helper function
-// Visit root, traverse left, traverse right (recursive)
+ /**
+  * Passes root to the helper function
+  * Recursively visit root, traverse left, traverse right
+  */
 void BST::PreOrder(){
 	this->PreOrderHelper(root);
 }
 
-// Visit root, traverse left, traverse right (recursive)
+ /**
+  * Recursively visit root, traverse left, traverse right
+  *
+  * @param Node* node to be displayed
+  */
 void BST::PreOrderHelper(Node* node){
 	if (node != nullptr){
 		cout << node->course.courseNumber << ": " << node->Course.courseTitle << " | "
@@ -96,13 +117,19 @@ void BST::PreOrderHelper(Node* node){
 	}
 }
 
-// Passes root to the helper function
-// Traverse left, traverse right, visit root (recursive)
+ /**
+  * Passes root to the helper function
+  * Recursively traverse left, traverse right, visit root
+  */
 void BST::PostOrder(){
 	this->PostOrderHelper(root);
 }
 
-// Traverse left, traverse right, visit root (recursive)
+ /**
+  * Recursively traverse left, traverse right, visit root
+  *
+  * @param Node* node to be displayed
+  */
 void BST::PostOrderHelper(Node* node){
 	if (node != nullptr){
 		cout << node->course.courseNumber << ": " << node->Course.courseTitle << " | "
@@ -112,18 +139,40 @@ void BST::PostOrderHelper(Node* node){
 	}
 }
 
-// Default constructor
+ /**
+  * Default constructor
+  */
 BST::BST(){
 	this->root = nullptr;
 	this->TreeSize = 0;
 }
 
-// Destructor
+ /**
+  * Destructor
+  */
 virtual ~BST(){
 	deleteTree(this->root);
 }
 
-// Insert a course
+ /**
+  * Recursively deletes the nodes of a tree
+  *
+  * @param Node* node to be deleted
+  */
+void BST::deleteTree(Node* node){
+	if(node != nullptr){
+		deleteTree(node->left);
+		deleteTree(node->right);
+		delete node;
+		node = nullptr;
+	}
+}
+
+ /**
+  * Insert a course
+  *
+  * @param int Course to be inserted
+  */
 void BST::Insert(Course course){
 	if (root == nullptr){ // Root does not exist
 		root = new Node(course); // Make the new node root
@@ -133,9 +182,60 @@ void BST::Insert(Course course){
 	}
 }
 
-// Remove a course
-void BST::remove (int courseNumber){
-	
+ /**
+  * Recursively remove a course
+  * Passes node information to removeNode(Node* node, int courseNumber).
+  *
+  * @param int courseNumber to be removed
+  */
+void BST::Remove (int courseNumber){
+	this->removeNode(root, courseNumber);
+	cout << "Removed " + courseNumber << endl;
+	return;
+}
+
+ /**
+  * Recursively remove a course from the tree
+  *
+  * @param Node* node to reference from
+  * @param int Course to be removed
+  */
+Node* BinarySearchTree::removeNode(Node* node, int courseNumber) { 
+	if (node == nullptr) {
+		return nullptr;
+	}
+
+	if (node->course.courseNumber > course.courseNumber){ // If the existing course number is greater than the one to be removed
+		node->left = removeNode(node->left, bidId); // Recurse down and replace the removed node
+	}
+	else if (node->course.courseNumber < course.courseNumber) { // Course for removal is larger, go right
+		node->right = removeNode(node->right, bidId); // Recurse down and replace the removed node
+	}
+	else {
+		if (node->left == nullptr && node->right == nullptr) { // leaf case
+			delete node;
+			node = nullptr; // Keep the pointer safe
+			return nullptr;
+		}
+		else if (node->left != nullptr && node->right == nullptr) { // Right is null case ("Case 4")
+			Node* temp = node;
+			node = node->left;
+			delete temp;
+		}
+		else if (node->left == nullptr && node->right != nullptr) { // Left is null case ("Case 3")
+			Node* temp = node;
+			node = node->right;
+		}
+		else { // Two children case ("Case 1")
+			Node* temp = node->right;
+			while (temp->left != nullptr) {  // Traverse left
+				temp = temp->left;
+			}
+			node->bid = temp->bid;
+			node->right = removeNode(node->right, temp->bid.bidId); // Recursively remove successor since it was copied
+		}
+	}
+	return node;
 }
 
 // Find a course
