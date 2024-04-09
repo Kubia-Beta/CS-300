@@ -2,6 +2,7 @@ struct Course { // Structure to hold course information
 	int courseNumber;
 	string courseTitle;
 	vector<string> coursePrerequisites;
+	
 	Course(){ // Default constructor
 		this->courseNumber = INT_MAX; // INT_MAX for debugging
 	}
@@ -12,9 +13,9 @@ struct Course { // Structure to hold course information
 		this->vector<string> coursePrerequisites;
 	}
 	Course(int number, string title, vector<string> prerequisites) : Course(vector<string> prerequisites){
-		this->courseNumber;
-		this->courseTitle;
-		this->coursePrerequisites;
+		this->courseNumber = number;
+		this->courseTitle = title;
+		this->coursePrerequisites = prerequisites;
 	}
 }
 
@@ -39,7 +40,7 @@ class BST {
 		void InOrderHelper(Node* node);
 		void PreOrderHelper(Node* node);
 		void PostOrderHelper(Node* node);
-		void deleteTree(Node* node);
+		void DeconstructorHelper(Node* node);
 		Node* removeNode(Node* node, int courseNumber);
 		int TreeSize;
 		void vectorPrinter(vector<string> Vector);
@@ -161,7 +162,7 @@ BST::BST(){
   * Destructor
   */
 virtual ~BST(){
-	deleteTree(this->root);
+	DeconstructorHelper(this->root);
 }
 
  /**
@@ -169,10 +170,10 @@ virtual ~BST(){
   *
   * @param Node* node to be deleted
   */
-void BST::deleteTree(Node* node){
+void BST::DeconstructorHelper(Node* node){
 	if(node != nullptr){
-		deleteTree(node->left);
-		deleteTree(node->right);
+		DeconstructorHelper(node->left);
+		DeconstructorHelper(node->right);
 		delete node;
 		node = nullptr;
 		this->TreeSize = this->TreeSize - 1;
@@ -326,7 +327,7 @@ void BST::CreateFromFile(string file) {
 			} else if (i == 2){ // The second line ex. "Introduction to Computer Science"
 				title = token;
 			}
-		}
+		} // The line has been fully read
 		Course course(number, title, prerequisites); // Create a course object with the parsed data
 		Insert(course); // Insert that course object into the tree
 	} // Continues looping until all lines have been parsed into course in BST
