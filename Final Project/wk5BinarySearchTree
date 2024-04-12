@@ -268,11 +268,11 @@ Course BST::Search(int courseNumber){
 	Node* currNode = this->root;
 
 	while (currNode != nullptr) {
-		// Compare the search courseNumber against the currently held courseNumber
-		if (comparisonResult == matchFlag) { // Found the course
+		int comparisonResult = currNode.courseNumber - courseNumber; // Compare the search courseNumber against the currently held courseNumber
+		if (comparisonResult == 0) { // Found the course
 			return currNode->course; // Return the currently held course that matched
 		}
-		else if (comparisonResult < matchFlag) { // The check is less than what was checked against
+		else if (comparisonResult < 0) { // The check is less than what was checked against
 			currNode = currNode->left; // Shift loop left
 		}
 		else { // current > courseNumber checked against
@@ -383,18 +383,10 @@ void verifyFile(string &filename){
 			if(line.find("CSC" != string::npos) || // Checks for common contents and compares them to "no position"
 			  (line.find("Intro" != string::npos) || // If all three equal npos, then none were found
 			  (line.find("100" != string::npos) ||{ // In short, we check for these three markers for valid formatting line by line
-				
-				// Components exist, do the correct items exist after each term
-				//FIXME: Compare CSC+1 to "I", Intro+1 to "d", 100 to "," since "CSCI100, Introd"
-				// Delete this section for performance? N^2 not nest is 3N?
-				if(line.substr(line.find("CSC") + 1).empty()) || // Look ahead by 1 position after finding this string.
-				line.substr(line.find("Intro")+ 1).empty() || // If anything is read after these terms,
-				line.substr(line.find("100")+ 1).empty() { // then the file must be following the correct format.
-					// If no characters are found in the position after search strings, then:
-					throw runtime_error("File Format: Error at line: " + currLine // Add the error line in the document to the error
+				throw runtime_error("File Format: Error at line: " + currLine // Add the error line in the document to the error
 					+ "Class names are of an incorrect format."
 					+ " Expected type: CSCI100.");
-				}
+				// Removed the extra check for being unnecessary algorithmically
 			}
 			// Since the substrings exist, check if they are in the expected order:
 			else if(regex_match(line, fileFormatting) == false){ // Uses a regex to find any class, if we do not find it:
@@ -417,18 +409,108 @@ void verifyFile(string &filename){
 
 
 
-int main{
+	// process command line arguments
+	string csvPath, bidKey;
+	switch (argc) {
+	case 2:
+		csvPath = argv[1];
+		bidKey = "98009";
+		break;
+	case 3:
+		csvPath = argv[1];
+		bidKey = argv[2];
+		break;
+	default:
+		csvPath = "eBid_Monthly_Sales.csv"; // _Dec_2016
+		bidKey = "98009";
+	}
+
+	// Define a timer variable
+	
+
+	// Define a binary search tree to hold all bids
+	BinarySearchTree* bst;
+	bst = new BinarySearchTree();
+	Bid bid;
+
+	int choice = 0;
+	while (choice != 9) {
+		cout << "Menu:" << endl;
+		cout << "  1. Load Bids" << endl;
+		cout << "  2. Display All Bids" << endl;
+		cout << "  3. Find Bid" << endl;
+		cout << "  4. Remove Bid" << endl;
+		cout << "  9. Exit" << endl;
+		cout << "Enter choice: ";
+		
+
+	cout << "Good bye." << endl;
+
+	return 0;
+
+int main(int argc, char* argv[]) {
 	string filename = "courses.txt";
 	int choice = 0;
+	clock_t ticks;
 	
-	cout << "Menu:" << endl;
-	cout << "1. " << endl;
-	cout << "2. " << endl;
-	cout << "3. " << endl;
-	cout << "4. " << endl;
-	cout << "5. " << endl;
-	cout << "6. " << endl;
-	cout << "7. " << endl;
-	cout << "8. " << endl;
-	cout << "9. " << endl;
+	while (choice != 9) {
+		cout << "Menu:" << endl;
+		cout << "1. Load Vector" << endl;
+		cout << "2. Load Hash Table" << endl;
+		cout << "3. Load Tree" << endl;
+		cout << "4. Print loaded data" << endl;
+		cout << "5. Find selected data" << endl;
+		cout << "6. Remove selected data" << endl;
+		cout << "9. Exit" << endl;
+		cin >> choice;
+
+		switch (choice) {
+
+		case 1:
+			
+			
+			
+			// Initialize a timer variable before loading bids
+			ticks = clock();
+
+			// Complete the method call to load the bids
+			loadBids(csvPath, bst);
+
+			//cout << bst->Size() << " bids read" << endl;
+
+			// Calculate elapsed time and display result
+			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+			cout << "time: " << ticks << " clock ticks" << endl;
+			cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+			break;
+
+		case 2:
+			bst->InOrder();
+			break;
+
+		case 3:
+			ticks = clock();
+
+			bid = bst->Search(bidKey);
+
+			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
+
+			if (!bid.bidId.empty()) {
+				displayBid(bid);
+			} else {
+				cout << "Bid Id " << bidKey << " not found." << endl;
+			}
+
+			cout << "time: " << ticks << " clock ticks" << endl;
+			cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
+
+			break;
+
+		case 4:
+			bst->Remove(bidKey);
+			break;
+		}
+	}
+		
+	}
 }

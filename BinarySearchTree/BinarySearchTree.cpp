@@ -300,10 +300,10 @@ void BinarySearchTree::addNode(Node* node, Bid bid) {
  */
 void BinarySearchTree::InOrderHelper(Node* node) {
 	if (node != nullptr) {
-		InOrderHelper(node->right);
+		InOrderHelper(node->right); // Recurse leftward to print all items before
 		cout << node->bid.bidId << ": " << node->bid.title << " | " << node->bid.amount << " | "
 			<< node->bid.fund << endl;
-		InOrderHelper(node->left);
+		InOrderHelper(node->left); // Now recurse rightward now that we have printed all nodes to the left and the input node
 	}
 }
 
