@@ -408,45 +408,14 @@ void verifyFile(string &filename){
 }
 
 
+void DataStructureChoicePrinter(int &choice){
+	take choice from main
+	if choice is 1, call vector print
+	if choice is 2, call had table print
+	if choice is 3, call bst table print inorder
+	return;
+}
 
-	// process command line arguments
-	string csvPath, bidKey;
-	switch (argc) {
-	case 2:
-		csvPath = argv[1];
-		bidKey = "98009";
-		break;
-	case 3:
-		csvPath = argv[1];
-		bidKey = argv[2];
-		break;
-	default:
-		csvPath = "eBid_Monthly_Sales.csv"; // _Dec_2016
-		bidKey = "98009";
-	}
-
-	// Define a timer variable
-	
-
-	// Define a binary search tree to hold all bids
-	BinarySearchTree* bst;
-	bst = new BinarySearchTree();
-	Bid bid;
-
-	int choice = 0;
-	while (choice != 9) {
-		cout << "Menu:" << endl;
-		cout << "  1. Load Bids" << endl;
-		cout << "  2. Display All Bids" << endl;
-		cout << "  3. Find Bid" << endl;
-		cout << "  4. Remove Bid" << endl;
-		cout << "  9. Exit" << endl;
-		cout << "Enter choice: ";
-		
-
-	cout << "Good bye." << endl;
-
-	return 0;
 
 int main(int argc, char* argv[]) {
 	string filename = "courses.txt";
@@ -466,51 +435,32 @@ int main(int argc, char* argv[]) {
 
 		switch (choice) {
 
-		case 1:
+		case 1: // Load vector
 			
-			
-			
-			// Initialize a timer variable before loading bids
-			ticks = clock();
-
-			// Complete the method call to load the bids
-			loadBids(csvPath, bst);
-
-			//cout << bst->Size() << " bids read" << endl;
-
-			// Calculate elapsed time and display result
-			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-			cout << "time: " << ticks << " clock ticks" << endl;
-			cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
 			break;
 
-		case 2:
-			bst->InOrder();
+		case 2: // Load Hash Table
+			
 			break;
 
-		case 3:
-			ticks = clock();
-
-			bid = bst->Search(bidKey);
-
-			ticks = clock() - ticks; // current clock ticks minus starting clock ticks
-
-			if (!bid.bidId.empty()) {
-				displayBid(bid);
-			} else {
-				cout << "Bid Id " << bidKey << " not found." << endl;
-			}
-
-			cout << "time: " << ticks << " clock ticks" << endl;
-			cout << "time: " << ticks * 1.0 / CLOCKS_PER_SEC << " seconds" << endl;
-
+		case 3: // Load Binary Search Tree
+			
 			break;
 
-		case 4:
-			bst->Remove(bidKey);
+		case 4: // Print loaded data
+			DataStructureChoicePrinter(choice);
+			break;
+			
+		case 5: // Print loaded data
+			
+			break;
+			
+		case 6: // Print loaded data
+			
 			break;
 		}
 	}
-		
-	}
+	cout << "Good bye." << endl;
+
+	return 0;
 }
