@@ -1,7 +1,7 @@
 ///////////////////////////
 // By:                 ///
 // Connor Sculthorpe  ///
-// 13 April 2024     ///
+// 14 April 2024     ///
 ///////////////////////
 
  /**
@@ -517,11 +517,13 @@ int main(int argc, char* argv[]) {
 
 		case 1: // Load vector
 			CreateVectorFromFile(file); // Load the vector
+			SortVectorByCourseNumber();
 			curLoaded = 1; // Set flag for the vector as the loaded element
 			break;
 
 		case 2: // Load Hash Table
 			CreateHashFromFile(file);
+			SortHashByCourseNumber();
 			curLoaded = 2;
 			break;
 

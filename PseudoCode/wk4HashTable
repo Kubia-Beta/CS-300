@@ -1,36 +1,8 @@
 ///////////////////////////
 // By:                 ///
 // Connor Sculthorpe  ///
-// 13 April 2024     ///
+// 14 April 2024     ///
 ///////////////////////
-
- /**
-  * Time: O(1)
-  * Space: O(n)
-  */
-struct Course { // Structure to hold course information
-	string courseNumber;
-	string courseTitle;
-	vector<string> coursePrerequisites;
-	
-	Course(){ // Default constructor
-		this->courseNumber = INT_MAX; // INT_MAX for debugging
-	}
-	Course(string title) : Course(){ // Constructor chain
-		this->courseTitle = "";
-	}
-	Course(vector<string> prerequisites) : Course (string title) {
-		this->vector<string> coursePrerequisites = prerequisites;
-	}
-	Course(string number, string title, vector<string> prerequisites) : Course(vector<string> prerequisites){
-		this->courseNumber = number;
-		this->courseTitle = title;
-		this->coursePrerequisites = prerequisites;
-	}
-		bool operator<(const Course &leftCourse, const Course &rightCourse) { // Overload < operator for sorting
-		return stoi(leftCourse.courseNumber) < stoi(rightCourse.courseNumber);
-	}
-}
 
  /**
   * Time: O(n)
@@ -72,7 +44,7 @@ class HashTable {
 		void RemoveItem(Course course);
 		Course SearchHash(Course course);
 		void PrintHash();
-		void SortByCourseNumber();
+		void SortHashByCourseNumber();
 }
 
 /**
@@ -139,7 +111,7 @@ bool HashTable::IsEmpty(){
 }
 
 /**
- * Inserts a new item into the hash table. If it collides, chain it.
+ * Inserts a new item into the hash table.
  *
  * Time: O(n)
  * Space: O(1)
@@ -152,11 +124,11 @@ void HashTable::InsertItem(Course course) {
 	else if (node->key == UINT_MAX){ // Is empty
 		node = Node(course, key);
 	}
-	else { // Chain
+	else {
 		while (node->next != nullptr) { // Traverse to find the end
 			node = node->next;
 		}
-		node->next = new Node(course, key); // Add a new node to the end of chain
+		node->next = new Node(course, key); // Add a new node to the end
 	}
 }
 
@@ -178,7 +150,7 @@ void HashTable::RemoveItem(Course course) {
 		return;
 	}
 	
-	while (node->next != nullptr) { // Search the chain for the course to remove
+	while (node->next != nullptr) { // Search for the course to remove
 		if (node->next->course == course) {
 			Node* temp = node->next;
 			node->next = temp->next;
@@ -201,7 +173,7 @@ Course HashTable::SearchHash(int aKey) {
 	unsigned int key = Hash(aKey);
 	Node* node = &(nodes[key]);
 	
-	while (node != nullptr) { // Search the chain for the course
+	while (node != nullptr) {
 		if (node->key != UINT_MAX && node->course.courseNumber == aKey) {
 			return &(node->course);
 		}
@@ -218,10 +190,10 @@ Course HashTable::SearchHash(int aKey) {
  */
 void HashTable::PrintHash() {
 	for (const Node& node : nodes) {
-		Node* current = node.next; // Start from the first node in the chain
+		Node* current = node.next;
 		while (current != nullptr) {
 			cout << "Key: " << current->key << ", Course: " << current->course.courseNumber << endl;
-			current = current->next; // Move to the next node in the chain
+			current = current->next;
 		}
 	}
 }
@@ -271,15 +243,15 @@ void HashTable::CreateHashFromFile(string file) {
 
 
 /**
-  * Extract all courses from the hash table
+  * Sorts the hash in alphanumeric order, lowest to highest
   *
   * Time: O(N log N)
-  * Space: O(1)
+  * Space: O(n)
   * Reference: https://en.cppreference.com/w/cpp/algorithm/sort
   */
-void HashTable::SortByCourseNumber() {
+void HashTable::SortHashByCourseNumber() {
 	vector<Course> tempCourses; // Create a temp vector to hold the course information while we sort it
-	for (const Node& node : nodes) {
+	for (const Node node : nodes) { // Traverse the nodes if they exist (collision)
 		Node* current = &node;
 		while (current) {
 			tempCourses.push_back(current->course);

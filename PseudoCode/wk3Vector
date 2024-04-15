@@ -1,48 +1,13 @@
 ///////////////////////////
 // By:                 ///
 // Connor Sculthorpe  ///
-// 13 April 2024     ///
+// 14 April 2024     ///
 ///////////////////////
 
- /**
-  * Time: O(1)
-  * Space: O(n)
-  */
-struct Course { // Structure to hold course information
-	string courseNumber;
-	string courseTitle;
-	vector<string> coursePrerequisites;
-	
-	Course(){ // Default constructor
-		this->courseNumber = INT_MAX; // INT_MAX for debugging
-	}
-	Course(string title) : Course(){ // Constructor chain
-		this->courseTitle = "";
-	}
-	Course(vector<string> prerequisites) : Course (string title) {
-		this->vector<string> coursePrerequisites = prerequisites;
-	}
-	Course(string number, string title, vector<string> prerequisites) : Course(vector<string> prerequisites){
-		this->courseNumber = number;
-		this->courseTitle = title;
-		this->coursePrerequisites = prerequisites;
-	}
-	bool operator<(const Course &leftCourse, const Course &rightCourse) { // Overload < operator for sorting
-		return stoi(leftCourse.courseNumber) < stoi(rightCourse.courseNumber);
-	}
-}
-
-class CourseVector {
-	private:
-	CreateVectorFromFile(string file);
-	vectorPrinter(vector<string> Vector);
-	public:
-	CourseVectorPrinter();
-	VectorSorting();
-}
+Vector<course> CourseVector;
 
 /**
-  * Opens a file, reads its data, and parses each line and adds it to the Binary Search Tree
+  * Opens a file, reads its data, and parses each line and adds it to the vector
   *
   * Time: O(n)
   * Space: O(n)
@@ -78,9 +43,9 @@ void CreateVectorFromFile(string file) {
 		Course course(number, title, prerequisites); // Create a course object with the parsed data
 		CourseVector.push_back(course); // Insert that course object into the CourseVector
 	} // Continues looping until all lines have been parsed into course in BST
-
-		
-
+	
+	
+	
 	infile.close(); // Close the file
 }
 
@@ -115,9 +80,45 @@ void CourseVectorPrinter() {
  /**
   * Sorts the vector in alphanumeric order, lowest to highest
   *
-  * Time: O()
-  * Space: O()
+  * Time: O(n log n)
+  * Space: O(log n)
+  * Reference: https://www.geeksforgeeks.org/analysis-of-time-and-space-complexity-of-stl-containers/
   */
-void VectorSorting(){
-	//FIXME: implement logic
+void SortVectorByCourseNumber() {
+	// Sort the extracted courses by course number using a lambda function
+	sort(CourseVector.begin(), CourseVector.end(), [](const Course& a, const Course& b)) {
+		return std::stoi(a.courseNumber) < std::stoi(b.courseNumber);
+	});
+
+}
+
+ /**
+  * Removes a course from a vector based on courseNumber
+  *
+  * Time: O(n)
+  * Space: O(1)
+  * @param string courseNumber courseNumber to be erased
+  */
+void RemoveCourseFromVector(string courseNumber) {
+	for (const Course course : vec) { // Iterate through each object in the vector
+		if (course.courseNumber.find(courseNumber)) != std::string::npos) { // If courseNumber is found
+			remove(CourseVector.begin(), CourvseVector.end(), const course); // Remove it
+		}
+	}
+}
+
+ /**
+  * Finds a course from a vector based on courseNumber
+  *
+  * Time: O(n)
+  * Space: O(1)
+  * @param string courseNumber courseNumber to be searched for
+  */
+Course SearchCourseVector(string courseNumber) {
+	for (const Course course : vec) { // Iterate through each object in the vector
+		if (course.courseNumber.find(courseNumber)) != std::string::npos) { // If courseNumber is found
+			return course;
+		}
+	}
+	return nullptr; // Not found
 }
