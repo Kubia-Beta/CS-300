@@ -9,7 +9,7 @@
   * Space: O(n)
   */
 struct Course { // Structure to hold course information
-	int courseNumber;
+	string courseNumber;
 	string courseTitle;
 	vector<string> coursePrerequisites;
 	
@@ -22,10 +22,13 @@ struct Course { // Structure to hold course information
 	Course(vector<string> prerequisites) : Course (string title) {
 		this->vector<string> coursePrerequisites = prerequisites;
 	}
-	Course(int number, string title, vector<string> prerequisites) : Course(vector<string> prerequisites){
+	Course(string number, string title, vector<string> prerequisites) : Course(vector<string> prerequisites){
 		this->courseNumber = number;
 		this->courseTitle = title;
 		this->coursePrerequisites = prerequisites;
+	}
+		bool operator<(const Course &leftCourse, const Course &rightCourse) { // Overload < operator for sorting
+		return stoi(leftCourse.courseNumber) < stoi(rightCourse.courseNumber);
 	}
 }
 
@@ -69,6 +72,7 @@ class HashTable {
 		void RemoveItem(Course course);
 		Course SearchHash(Course course);
 		void PrintHash();
+		void SortByCourseNumber();
 }
 
 /**
@@ -103,7 +107,7 @@ HashTable::HashTable(unsigned int size) {
  * Space: O(1)
  */
 HashTable::~HashTable(){
-	// Node vector will deallocate itself when called here
+	// FIXME: Destructor
 }
 
 /**
@@ -135,25 +139,24 @@ bool HashTable::IsEmpty(){
 }
 
 /**
- * Inserts a new item into the hash table.
+ * Inserts a new item into the hash table. If it collides, chain it.
  *
  * Time: O(n)
  * Space: O(1)
  * @param Course course: The course to be inserted.
- * @param string item: The item associated with the course.
  */
-void HashTable::InsertItem(Course course, string item) {
+void HashTable::InsertItem(Course course) {
 	unsigned key = Hash(course.courseNumber);
 	Node* node = &(nodes.at(key));
-
-	if (node->key == UINT_MAX){ // Is empty
+	
+	else if (node->key == UINT_MAX){ // Is empty
 		node = Node(course, key);
 	}
-	else {
+	else { // Chain
 		while (node->next != nullptr) { // Traverse to find the end
-			node= node->next;
+			node = node->next;
 		}
-		node->next = new Node(course, key); // Add a new node to the end
+		node->next = new Node(course, key); // Add a new node to the end of chain
 	}
 }
 
@@ -223,66 +226,74 @@ void HashTable::PrintHash() {
 	}
 }
 
+/**
+  * Opens a file, reads its data, and parses each line and adds it to the Hash Table
+  *
+  * Time: O(n)
+  * Space: O(n)
+  * @param string filename to be opened
+  */
+void HashTable::CreateHashFromFile(string file) {
+	string line = ""; // Holds each line read from file
+	verifyFile(file);
+	
+	// Initialize our variables for holding course information
+	vector<string> prerequisites;
+	string number;
+	string title;
+	
+	ifstream infile(file); // Open the file
 
-// Code based on ony of my own public repositories, Hold_to_Craft
-// https://github.com/Kubia-Beta/Hold_to_Craft
-void verifyFile(string &filename){
-	string inLine = "" // Now unused comparison string? Keep for now for version control?
-	string line = ""
-	ifstream infile(filename)
-	regex fileFormatting("C.*\d+,\s*[A-Za-z].*") // Catches C, then any characeters, ends in a digit, comma, any letter
-	try {
-		if (!infile){ // could not open, failbit
-			cerr << "error on file opening, make sure the program hass access to the directory" // Prints an error to the console
-			throw runtime_error("File Access: Please verify the input file exists and is not protected")
-		} else if (file.good == false){ // Other file operating issue
-			throw runtime_error("Unknown File Access error")
-		}
-		while(getline(infile, line)){ // While reading line by line
-			int i = 1
-			if(line.find("CSC" || "Intro" || "100")  != string::npos) { // Do these common contents exist
-				if(line.substr(line.find("CSC" || "Intro" || "100") + 1).empty()){ // If it does exist, does anything exist after it
-					cerr << "Error in file formatting" // If not, we have a major problem
-					throw runtime_error("File Format: Error in file formatting")
-				}
-			} else if(regex_match(line, fileFormatting) == false){ // File does not have the correct ordering of structure
-				cerr << "Error in file structure at line: " + i // show expected format in error?
-				throw runtime_error("Internal File Structure: error at line " + i)
+	while (getline(file, line)){ // Read each line from the file
+		istringstream iss(line);
+		string token;
+		int i = 0;
+		
+		while (getline(iss, token, ',')){ // Parse the line by commas, token holds the values
+			i++ // Increase the line count by 1
+			
+			if (i > 2){ // Add the prerequisites to the vector after the first two commas
+				prerequisites.push_back(token);
+			} else if (i == 1){ // The first line ex. "CSCI100"
+				number = token;
+			} else if (i == 2){ // The second line ex. "Introduction to Computer Science"
+				title = token;
 			}
-		} // To get to this line, it must now be verified
-		infile.close() // We are done verifying, close the file
-		return
-	}
-	catch(){
-		infile.close()
-		cerr << "Eror in file verification. Please check the console log."
-		return
-	}
+		} // The line has been fully read
+		Course course(number, title, prerequisites); // Create a course object with the parsed data
+		Insert(course); // FIXME: Insert for Hash Table
+	} // Continues looping until all lines have been parsed into course in BST
+
+		
+
+	infile.close(); // Close the file
 }
 
-// Open the file, read the data, parse each line
-void openAndReadFile(string file, Vector<Course> courses) {
-	string filename = file
-	string line = "";
-	verifyFile(filename)
-	
-	ifstream infile(filename)
-	
-	while (getline(infile, line)) {
-		istringstream iss(line)
-		string token
-		vector<string> tokens
-		
-		while (getline(iss, token, ',')) {
-			pushback(token)
+
+/**
+  * Extract all courses from the hash table
+  *
+  * Time: O(N log N)
+  * Space: O(1)
+  * Reference: https://en.cppreference.com/w/cpp/algorithm/sort
+  */
+void HashTable::SortByCourseNumber() {
+	vector<Course> tempCourses; // Create a temp vector to hold the course information while we sort it
+	for (const Node& node : nodes) {
+		Node* current = &node;
+		while (current) {
+			tempCourses.push_back(current->course);
+			current = current->next;
 		}
-		
-		for (token size) {
-			coursePrerequisites.pushback(tokens[i])
-		}
-		Course course(number, title, prerequisites)
-		courses.pushback(course)
 	}
 	
-	infile.close()
+	// Sort the extracted courses by course number using a lambda function
+	sort(tempCourses.begin(), tempCourses.end(), [](const Course& a, const Course& b)) {
+		return std::stoi(a.courseNumber) < std::stoi(b.courseNumber);
+	});
+	
+	nodes.clear(); // Clear it now that we have a sorted vector to copy into it
+	for (const Course& course : tempCourses) { // Reinsert sorted courses into the hash table
+		InsertItem(course);
+	}
 }

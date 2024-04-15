@@ -9,7 +9,7 @@
   * Space: O(n)
   */
 struct Course { // Structure to hold course information
-	int courseNumber;
+	string courseNumber;
 	string courseTitle;
 	vector<string> coursePrerequisites;
 	
@@ -22,85 +22,30 @@ struct Course { // Structure to hold course information
 	Course(vector<string> prerequisites) : Course (string title) {
 		this->vector<string> coursePrerequisites = prerequisites;
 	}
-	Course(int number, string title, vector<string> prerequisites) : Course(vector<string> prerequisites){
+	Course(string number, string title, vector<string> prerequisites) : Course(vector<string> prerequisites){
 		this->courseNumber = number;
 		this->courseTitle = title;
 		this->coursePrerequisites = prerequisites;
 	}
-}
-
-// Open the file, read the data, parse each line, and check for file format errors
-void openAndReadFile(string file, Vector<Course> courses) {
-	string filename = file
-	verifyFile(filename)
-	
-	try {
-		ifstream infile(filename)
-		if file.good() {
-			while (getline, line) {
-				read line from file, set to inLine // Delimiter? Have to see first
-				if number of parameters in line >= 2 {
-					if all prerequisites exist as courses in the file {
-						createCourseObjects(inLine) // Create Course object with extracted data
-					} else { // prerequisites do not exist in file
-						throw FileFormatException("Prerequisite course not found");
-					}
-				} else { // Paramater count must be less than 2
-					throw FileFormatException("Incorrect file format");
-				}
-			}
-			close file
-		} else {
-			throw FileOpenException("Unable to open file");
-		}
-	} catch (FileOpenException e) {
-		print error message
-		close file // Depending on method, it may be a stream and not just a literal file, so close it.
-	} catch (FileFormatException e) {
-		print error message
-		close file
+	bool operator<(const Course &leftCourse, const Course &rightCourse) { // Overload < operator for sorting
+		return stoi(leftCourse.courseNumber) < stoi(rightCourse.courseNumber);
 	}
 }
 
-
-
-// Create course objects and store them in the appropriate data structure
-void createCourseObjects(string line) {
-	string courseNumber to getline(',') // Grab the first line
-	string courseTitle to getline(',') // Now the second
-	string temp
-	vector<int> coursePrerequisites
-	// Now create the object
-	while(getline(','){
-		Grabs the rest of the line, adds to temp, then adds to prereq vector then loops
-	}
-	Course newCourse
-	set newCourse to hold courseNumber
-	set newCourse to hold courseTitle
-	set newCourse to hold coursePrerequisites
-	all through Course()
-}
-}
-
-// Search the data structure for a specific course and print course information and prerequisites
-void searchAndPrintCourse(Vector<Course> courses, string courseNumber) {
-	for each course in courses {
-		if course.number == courseNumber {
-			print course information (number, title) // Call a separate print function instead?
-			for each prerequisite of the course {
-				print prerequisite course information (number, title)
-			}
-			return; // exit loop if course is found
-		}
-	}
-	print "Course not found";
+class CourseVector {
+	private:
+	CreateVectorFromFile(string file);
+	vectorPrinter(vector<string> Vector);
+	public:
+	CourseVectorPrinter();
+	VectorSorting();
 }
 
 /**
   * Opens a file, reads its data, and parses each line and adds it to the Binary Search Tree
   *
-  * Time: O(n * k), where n is the number of lines and k is the number of prerequisites per line
-  * Space: O(n * k), where n is the number of lines and k is the number of prerequisites per line
+  * Time: O(n)
+  * Space: O(n)
   * @param string filename to be opened
   */
 void CreateVectorFromFile(string file) {
@@ -131,10 +76,48 @@ void CreateVectorFromFile(string file) {
 			}
 		} // The line has been fully read
 		Course course(number, title, prerequisites); // Create a course object with the parsed data
-		CourseVector.push_back(course); // Insert that course object into the tree
+		CourseVector.push_back(course); // Insert that course object into the CourseVector
 	} // Continues looping until all lines have been parsed into course in BST
 
 		
 
 	infile.close(); // Close the file
+}
+
+ /**
+  * Prints a course's vector contents for prerequisites
+  *
+  * Time: O(n)
+  * Space: O(1)
+  * @param vector<string> Vector to be printed
+  */
+void vectorPrinter(vector<string> Vector) {
+	for (auto i: Vector){
+		cout << i << ",";
+	}
+	cout << endl;
+}
+
+ /**
+  * Prints all course information
+  *
+  * Time: O(n)
+  * Space: O(1)
+  */
+void CourseVectorPrinter() {
+    for (const Course& course : CourseVector) {
+        cout << "Course Number: " << course.courseNumber << ", Course Title: " << course.courseTitle << endl;
+        cout << "Prerequisites: ";
+        vectorPrinter(course.coursePrerequisites);
+    }
+}
+
+ /**
+  * Sorts the vector in alphanumeric order, lowest to highest
+  *
+  * Time: O()
+  * Space: O()
+  */
+void VectorSorting(){
+	//FIXME: implement logic
 }
