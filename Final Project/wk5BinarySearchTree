@@ -1,7 +1,7 @@
 ///////////////////////////
 // By:                 ///
 // Connor Sculthorpe  ///
-// 12 April 2024     ///
+// 13 April 2024     ///
 ///////////////////////
 
  /**
@@ -69,7 +69,7 @@ class BST {
 		void Remove (int courseNumber);
 		void Size();
 		Course Search(int courseNumber);
-		void CreateFromFile(string file);
+		void CreateBSTFromFile(string file);
 }
 
  /**
@@ -346,11 +346,11 @@ void BST::vectorPrinter(vector<string> Vector) {
 /**
   * Opens a file, reads its data, and parses each line and adds it to the Binary Search Tree
   *
-  * Time: O(log n)
+  * Time: O(n)
   * Space: O(n)
   * @param string filename to be opened
   */
-void BST::CreateFromFile(string file) {
+void BST::CreateBSTFromFile(string file) {
 	string line = ""; // Holds each line read from file
 	verifyFile(file);
 	
@@ -512,8 +512,8 @@ int main(int argc, char* argv[]) {
 		switch (choice) {
 
 		case 1: // Load vector
-			call vector load
-			curLoaded = 1;
+			CreateVectorFromFile(file) // Load the vector
+			curLoaded = 1; // Set flag for the vector as the loaded element
 			break;
 
 		case 2: // Load Hash Table
@@ -522,7 +522,7 @@ int main(int argc, char* argv[]) {
 			break;
 
 		case 3: // Load Binary Search Tree
-			call CreateFromFile(file)
+			call CreateBSTFromFile(file)
 			curLoaded = 3;
 			break;
 

@@ -1,50 +1,31 @@
-struct Course {
-	int courseNumber // Cast input line from string to int for fast comparisons
-	string courseTitle // Titles are strings
-	vector<int> coursePrerequisites /* Prerequisites are titles, which are we match to courseNumber
-	 * Size is n, where n>=0, so it needs to be dynamic (not an array)
-	 * Constant time access may be helpful here
-	 */
-	Course(int count, string title, vector prerequisites){ // Constructor
-		set courseNumber to count
-		set courseTitle to title
-		set coursePrerequisites to prerequisites
-	}
-}
+///////////////////////////
+// By:                 ///
+// Connor Sculthorpe  ///
+// 13 April 2024     ///
+///////////////////////
 
-// Code based on ony of my own public repositories, Hold_to_Craft
-// https://github.com/Kubia-Beta/Hold_to_Craft
-void verifyFile(string &filename){
-	string inLine
-	string line
-	ifstream infile(filename)
-	regex fileFormatting("C.*\d+,\s*[A-Za-z].*") // Catches C, then any characeters, ends in a digit, comma, any letter
-	try {
-		if (!infile){ // could not open, failbit
-			cerr << "error on file opening, make sure the program hass access to the directory" // Prints an error to the console
-			throw runtime_error("File Access: Please verify the input file exists and is not protected")
-		} else if (file.good == false){ // Other file operating issue
-			throw runtime_error("Unknown File Access error")
-		}
-		while(getline(infile, line)){ // While reading line by line
-			int i = 1
-			if(line.find("CSC" || "Intro" || "100")  != string::npos) { // Do these common contents exist
-				if(line.substr(line.find("CSC" || "Intro" || "100") + 1).empty()){ // If it does exist, does anything exist after it
-					cerr << "Error in file formatting" // If not, we have a major problem
-					throw runtime_error("File Format: Error in file formatting")
-				}
-			} else if(regex_match(line, fileFormatting) == false){ // File does not have the correct ordering of structure
-				cerr << "Error in file structure at line: " + i
-				throw runtime_error("Internal File Structure: error at line " + i)
-			}
-		} // To get to this line, it must now be verified
-		infile.close() // We are done verifying, close the file
-		return
+ /**
+  * Time: O(1)
+  * Space: O(n)
+  */
+struct Course { // Structure to hold course information
+	int courseNumber;
+	string courseTitle;
+	vector<string> coursePrerequisites;
+	
+	Course(){ // Default constructor
+		this->courseNumber = INT_MAX; // INT_MAX for debugging
 	}
-	catch(){
-		infile.close()
-		cerr << "Eror in file verification. Please check the console log."
-		return
+	Course(string title) : Course(){ // Constructor chain
+		this->courseTitle = "";
+	}
+	Course(vector<string> prerequisites) : Course (string title) {
+		this->vector<string> coursePrerequisites = prerequisites;
+	}
+	Course(int number, string title, vector<string> prerequisites) : Course(vector<string> prerequisites){
+		this->courseNumber = number;
+		this->courseTitle = title;
+		this->coursePrerequisites = prerequisites;
 	}
 }
 
@@ -99,6 +80,7 @@ void createCourseObjects(string line) {
 	set newCourse to hold coursePrerequisites
 	all through Course()
 }
+}
 
 // Search the data structure for a specific course and print course information and prerequisites
 void searchAndPrintCourse(Vector<Course> courses, string courseNumber) {
@@ -112,4 +94,47 @@ void searchAndPrintCourse(Vector<Course> courses, string courseNumber) {
 		}
 	}
 	print "Course not found";
+}
+
+/**
+  * Opens a file, reads its data, and parses each line and adds it to the Binary Search Tree
+  *
+  * Time: O(n * k), where n is the number of lines and k is the number of prerequisites per line
+  * Space: O(n * k), where n is the number of lines and k is the number of prerequisites per line
+  * @param string filename to be opened
+  */
+void CreateVectorFromFile(string file) {
+	string line = ""; // Holds each line read from file
+	verifyFile(file);
+	
+	// Initialize our variables for holding course information
+	vector<string> prerequisites;
+	string number;
+	string title;
+	
+	ifstream infile(file); // Open the file
+
+	while (getline(file, line)){ // Read each line from the file
+		istringstream iss(line);
+		string token;
+		int i = 0;
+		
+		while (getline(iss, token, ',')){ // Parse the line by commas, token holds the values
+			i++ // Increase the line count by 1
+			
+			if (i > 2){ // Add the prerequisites to the vector after the first two commas
+				prerequisites.push_back(token);
+			} else if (i == 1){ // The first line ex. "CSCI100"
+				number = token;
+			} else if (i == 2){ // The second line ex. "Introduction to Computer Science"
+				title = token;
+			}
+		} // The line has been fully read
+		Course course(number, title, prerequisites); // Create a course object with the parsed data
+		CourseVector.push_back(course); // Insert that course object into the tree
+	} // Continues looping until all lines have been parsed into course in BST
+
+		
+
+	infile.close(); // Close the file
 }

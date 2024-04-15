@@ -1,14 +1,38 @@
+///////////////////////////
+// By:                 ///
+// Connor Sculthorpe  ///
+// 13 April 2024     ///
+///////////////////////
+
+ /**
+  * Time: O(1)
+  * Space: O(n)
+  */
 struct Course { // Structure to hold course information
 	int courseNumber;
 	string courseTitle;
 	vector<string> coursePrerequisites;
-	Course(){
-		courseNumber = INT_MAX; // INT_MAX for debugging
+	
+	Course(){ // Default constructor
+		this->courseNumber = INT_MAX; // INT_MAX for debugging
+	}
+	Course(string title) : Course(){ // Constructor chain
+		this->courseTitle = "";
+	}
+	Course(vector<string> prerequisites) : Course (string title) {
+		this->vector<string> coursePrerequisites = prerequisites;
+	}
+	Course(int number, string title, vector<string> prerequisites) : Course(vector<string> prerequisites){
+		this->courseNumber = number;
+		this->courseTitle = title;
+		this->coursePrerequisites = prerequisites;
 	}
 }
 
-//FIXME: lacks detailed collision management strategies
-//Incorporating clear processes for dealing with hash key collisions, through methods such as chaining or linear probing
+ /**
+  * Time: O(n)
+  * Space: O(n)
+  */
 class HashTable {
 	private:
 		const unsigned int DEFAULT_SIZE = 97; // Largest 2 digit prime as a default constant
@@ -16,20 +40,18 @@ class HashTable {
 		struct Node {
 			Course course
 			unsigned int key
-			Node* next; // Double link?
-			Node* prev;
+			Node* next;
 	
 			Node(){ // Default constructor
 				key = UINT_MAX; // 0xFFFFFFFF
 				next = nullptr;
-				prev = nullptr;
 			}
 	
 			Node(Course aCourse) : Node() { // Call the default constructor when calling the constructor
 				course = aCourse;
 			}
 			
-			Node(Course Course, unsigned int aKey) : Node(Course Course) { // Continue calling previous constructors
+			Node(Course Course, unsigned int aKey) : course(aCourse), key(aKey), next(nullptr) { // Continue calling previous constructors
 				key = aKey
 			}
 		}
@@ -49,77 +71,154 @@ class HashTable {
 		void PrintHash();
 }
 
+/**
+ * Default constructor for the HashTable class.
+ *
+ * Time: O(1)
+ * Space: O(1)
+ */
 HashTable::HashTable() {
+	nodes.resize(tableSize);
+	for (Node& node : nodes) { // Initialize each node in the vector
+		node = Node();
+	}
+}
+
+/**
+ * Constructor for the HashTable class.
+ *
+ * Time: O(n)
+ * Space: O(n)
+ * @param unsigned int size: The size of the hash table.
+ */
+HashTable::HashTable(unsigned int size) {
+	this->tableSize = size;
 	nodes.resize(tableSize);
 }
 
-HashTable::HashTable(unsigned int size) {
-	this->tableSize = size
-	nodes.resize(tableSize)
-}
-
+/**
+ * Destructor for the HashTable class.
+ *
+ * Time: O(n)
+ * Space: O(1)
+ */
 HashTable::~HashTable(){
 	// Node vector will deallocate itself when called here
 }
 
+/**
+ * Hash function to calculate the index for a given key.
+ *
+ * Time: O(1)
+ * Space: O(1)
+ * @param int aKey: The key to be hashed.
+ * @return unsigned int: The hash value.
+ */
 int HashTable::Hash(int aKey) {
-	return aKey % tableSize
+	return aKey % tableSize;
 }
 
+/**
+ * Checks if the hash table is empty.
+ *
+ * Time: O(n)
+ * Space: O(1)
+ * @return bool: True if the hash table is empty, false otherwise.
+ */
 bool HashTable::IsEmpty(){
-	for (i < tableSize){ // Loop through the whole table
-		int sum = table.size();
+	for (const Node node : nodes) {
+		if (node.key != UINT_MAX) {
+			return false; // Non-empty slot found
+		}
 	}
-	if (the sum == 0){
-		return true;
-	else {
-		return false;
-	}
+	return true; // All slots are empty
 }
-	
+
+/**
+ * Inserts a new item into the hash table.
+ *
+ * Time: O(n)
+ * Space: O(1)
+ * @param Course course: The course to be inserted.
+ * @param string item: The item associated with the course.
+ */
 void HashTable::InsertItem(Course course, string item) {
-	unsigned key = hash(course.courseNumber);
+	unsigned key = Hash(course.courseNumber);
 	Node* node = &(nodes.at(key));
-	if (nullptr){
-		newNode = new Node(course, key)
-	}
-	else if (unused and found) {
-		node-> key, course equal to name of variable pointed to
-		next-> = nullptr
+
+	if (node->key == UINT_MAX){ // Is empty
+		node = Node(course, key);
 	}
 	else {
-		while (we are not at last node) {
-			node = node->next // Make the next node the new current
+		while (node->next != nullptr) { // Traverse to find the end
+			node= node->next;
 		}
-		node->next = new Node(course, key) // Add on the new node to the end
+		node->next = new Node(course, key); // Add a new node to the end
 	}
 }
 
-void HashTable::RemoveItem(Course course) { // Or would you pass courseNumber?
-	key = hash(course.courseNumber)
-	nodes.erase(nodes.begin() + key) // This structure worked in the hash table from before, double check though
-}
-
-Course HashTable::SearchHash(int aKey) {
-	Course course
-	Node* node as address of node inside bucket
-	key = aKey
+/**
+ * Removes an item from the hash table.
+ *
+ * Time: O(n)
+ * Space: O(1)
+ * @param Course course: The course to be removed.
+ */
+void HashTable::RemoveItem(Course course) {
+	unsigned int key = Hash(course.courseNumber);
+	Node* node = &(nodes[key]);
 	
-	while (node != nullptr) {
-		if (node->key != UINT_MAX && node->course.courseNumber == courseNumber) {
-			return node->course;
+	
+	if (node->course == course) { // Check if the first node matches the course
+		nodes[key] = *(node->next); // Remove the first node by updating the pointer
+		delete node;
+		return;
+	}
+	
+	while (node->next != nullptr) { // Search the chain for the course to remove
+		if (node->next->course == course) {
+			Node* temp = node->next;
+			node->next = temp->next;
+			delete temp;
+			return;
 		}
-		node = node->next
+		node = node->next;
 	}
 }
 
+/**
+ * Searches for a course in the hash table.
+ *
+ * Time: O(n)
+ * Space: O(1)
+ * @param int aKey: The key of the course to be searched.
+ * @return Course*: Pointer to the found course, or nullptr if not found.
+ */
+Course HashTable::SearchHash(int aKey) {
+	unsigned int key = Hash(aKey);
+	Node* node = &(nodes[key]);
+	
+	while (node != nullptr) { // Search the chain for the course
+		if (node->key != UINT_MAX && node->course.courseNumber == aKey) {
+			return &(node->course);
+		}
+		node = node->next;
+	}
+	return nullptr; // Course not found
+}
+
+/**
+ * Prints the contents of the hash table.
+ *
+ * Time: O(n)
+ * Space: O(n)
+ */
 void HashTable::PrintHash() {
-	for (size of nodes) {
-		while (current node is not null) {
-			if (current is not MAX flag) {
-				cout << course information from key
-			}
-			current = current->next
+	for (const Node& node : nodes) {
+		Node* current = node.next; // Start from the first node in the chain
+		while (current != nullptr) {
+			cout << "Key: " << current->key << ", Course: " << current->course.courseNumber << endl;
+			current = current->next; // Move to the next node in the chain
 		}
 	}
 }
