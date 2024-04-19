@@ -1,9 +1,10 @@
 #include <algorithm>
 #include <climits>
 #include <iostream>
-#include <string> // atoi
-#include <time.h>
 #include <fstream>
+#include <sstream>
+#include <string>
+#include <time.h>
 #include <vector>
 #include <regex>
 #include <climits>
@@ -12,19 +13,24 @@ using namespace std;
 
 
 struct Course { // Structure to hold course information
-	int courseNumber;
+	string courseNumber;
 	string courseTitle;
 	vector<string> coursePrerequisites;
 
 	Course() {
-		courseNumber = INT_MAX; // INT_MAX for debugging
+		courseNumber = ""; 
 		courseTitle = "";
+	}
+	Course(string number, string title, vector<string> prerequisites) {
+		courseNumber = number;
+		courseTitle = title;
+		coursePrerequisites = prerequisites;
 	}
 };
 
 //FIXME: lacks detailed collision management strategies
 //Incorporating clear processes for dealing with hash key collisions, through methods such as chaining or linear probing
-/**
+ /**
   * Time: O(n)
   * Space: O(n)
   */
@@ -34,7 +40,7 @@ private:
 
 	struct Node {
 		Course course;
-		unsigned int key; // Hash key
+		unsigned int key; // Hash key, obtained by hashing the course number after converting it to an integer through stoi
 		Node* next;
 
 
@@ -55,16 +61,19 @@ private:
 	vector<Node> nodes;
 	unsigned int tableSize = DEFAULT_SIZE;
 	unsigned int Hash(unsigned int aKey);
+	unsigned int Hash(string courseNumber);
 
 public:
 	HashTable();
 	HashTable(unsigned int size);
 	~HashTable();
 	bool IsEmpty();
-	void InsertItem(Course course, string item);
+	void InsertItem(Course course);
 	void RemoveItem(Course course);
-	Course SearchHash(Course course);
+	Course SearchHash(unsigned int aKey);
 	void PrintHash();
+	void CreateHashFromFile(string file);
+	void SortHashByCourseNumber();
 };
 
 
@@ -91,7 +100,7 @@ HashTable::HashTable() {
  */
 HashTable::HashTable(unsigned int size) {
 	this->tableSize = size;
-	nodes.resize(tableSize);
+	// nodes.resize(tableSize); // Necessary?
 }
 
 /**
@@ -101,7 +110,14 @@ HashTable::HashTable(unsigned int size) {
  * Space: O(1)
  */
 HashTable::~HashTable() {
-	// FIXME: Destructor
+	for (Node& node : nodes) {
+		Node* current = node.next;
+		while (current) {
+			Node* temp = current;
+			current = current->next;
+			delete temp;
+		}
+	}
 }
 
 /**
@@ -114,6 +130,18 @@ HashTable::~HashTable() {
  */
 unsigned int HashTable::Hash(unsigned int aKey) {
 	return aKey % tableSize;
+}
+
+/**
+ * Hash function to calculate the index for a given key.
+ *
+ * Time: O(1)
+ * Space: O(1)
+ * @param string courseNumber: The coursenumber value to convert to a key to then hash.
+ * @return unsigned int: The hash value.
+ */
+unsigned int HashTable::Hash(string courseNumber) {
+	return stoi(courseNumber) % tableSize;
 }
 
 /**
@@ -139,19 +167,19 @@ bool HashTable::IsEmpty() {
  * Space: O(1)
  * @param Course course: The course to be inserted.
  */
-void HashTable::InsertItem(Course course, string item) {
-	unsigned key = Hash(course.courseNumber);
-	Node* node = &(nodes.at(key));
+void HashTable::InsertItem(Course course) {
+	unsigned key = Hash(course.courseNumber); // Hash the course number
+	Node* node = &(nodes.at(key)); // Get the first node at the hashed index
 
 	if (node->key == UINT_MAX) { // Is empty
 		node = new Node(course, key);
-		}
+	}
 	else {
-			while (node->next != nullptr) { // Traverse to find the end
-				node = node->next;
-			}
-			node->next = new Node(course, key); // Add a new node to the end
-			}
+		while (node->next != nullptr) { // Traverse to find the end
+			node = node->next;
+		}
+		node->next = new Node(course, key); // Add a new node to the end
+	}
 }
 
 /**
@@ -162,18 +190,18 @@ void HashTable::InsertItem(Course course, string item) {
  * @param Course course: The course to be removed.
  */
 void HashTable::RemoveItem(Course course) {
-	unsigned int key = Hash(course.courseNumber);
+	unsigned int key = Hash(course.courseNumber); // Hash the course number by converting it to an integer
 	Node* node = &(nodes[key]);
 
 
-	if (node->course == course) { // Check if the first node matches the course
+	if (node->course.courseNumber == course.courseNumber) { // Check if the first node matches the course
 		nodes[key] = *(node->next); // Remove the first node by updating the pointer
 		delete node;
 		return;
 	}
 
 	while (node->next != nullptr) { // Search for the course to remove
-		if (node->next->course == course) {
+		if (node->next->course.courseNumber == course.courseNumber) {
 			Node* temp = node->next;
 			node->next = temp->next;
 			delete temp;
@@ -191,17 +219,17 @@ void HashTable::RemoveItem(Course course) {
  * @param int aKey: The key of the course to be searched.
  * @return Course*: Pointer to the found course, or nullptr if not found.
  */
-Course HashTable::SearchHash(int aKey) {
-	unsigned int key = Hash(aKey);
-	Node* node = &(nodes[key]);
+Course HashTable::SearchHash(unsigned int aKey) {
+	unsigned int key = Hash(aKey); // Hash the key, remember a key is just the stoi of a course number
+	Node* node = &(nodes[key]); // Get the first node at the hashed index
 
-	while (node != nullptr) {
-		if (node->key != UINT_MAX && node->course.courseNumber == aKey) {
-			return &(node->course);
+	while (node != nullptr) { // Traverse the linked list
+		if (node->key != UINT_MAX && stoi(node->course.courseNumber) == aKey) { // Check if the course number matches
+			return node->course; // Course found
 		}
-		node = node->next;
+		node = node->next; // Move to the next node
 	}
-	return nullptr; // Course not found
+	return; // Course not found
 }
 
 /**
@@ -238,26 +266,26 @@ void HashTable::CreateHashFromFile(string file) {
 
 	ifstream infile(file); // Open the file
 
-	while (getline(file, line)) { // Read each line from the file
+	while (getline(infile, line)) { // Read each line from the file
 		istringstream iss(line);
 		string token;
 		int i = 0;
 
 		while (getline(iss, token, ',')) { // Parse the line by commas, token holds the values
-			i++ // Increase the line count by 1
+			i++; // Increase the line count by 1
 
-				if (i > 2) { // Add the prerequisites to the vector after the first two commas
-					prerequisites.push_back(token);
-				}
-				else if (i == 1) { // The first line ex. "CSCI100"
-					number = token;
-				}
-				else if (i == 2) { // The second line ex. "Introduction to Computer Science"
-					title = token;
-				}
+			if (i > 2) { // Add the prerequisites to the vector after the first two commas
+				prerequisites.push_back(token);
+			}
+			else if (i == 1) { // The first line ex. "CSCI100"
+				number = token;
+			}
+			else if (i == 2) { // The second line ex. "Introduction to Computer Science"
+				title = token;
+			}
 		} // The line has been fully read
 		Course course(number, title, prerequisites); // Create a course object with the parsed data
-		Insert(course); // FIXME: Insert for Hash Table
+		InsertItem(course); // FIXME: Insert for Hash Table
 	} // Continues looping until all lines have been parsed into course in BST
 
 
@@ -275,16 +303,16 @@ void HashTable::CreateHashFromFile(string file) {
   */
 void HashTable::SortHashByCourseNumber() {
 	vector<Course> tempCourses; // Create a temp vector to hold the course information while we sort it
-	for (const Node node : nodes) { // Traverse the nodes if they exist (collision)
-		Node* current = &node;
-		while (current) {
-			tempCourses.push_back(current->course);
-			current = current->next;
+	for (const Node& node : nodes) { // Extract all courses from the hash table
+		Node* current = node.next; // Start at the first node
+		while (current) { // Traverse the linked list
+			tempCourses.push_back(current->course); // Add the course to the vector
+			current = current->next; // Move to the next node
 		}
 	}
 
 	// Sort the extracted courses by course number using a lambda function
-	sort(tempCourses.begin(), tempCourses.end(), [](const Course& a, const Course& b)) {
+	sort(tempCourses.begin(), tempCourses.end(), [](const Course& a, const Course& b) {
 		return std::stoi(a.courseNumber) < std::stoi(b.courseNumber);
 	});
 
@@ -295,16 +323,21 @@ void HashTable::SortHashByCourseNumber() {
 }
 
 
-/**
- * Verifies file and data integrity and validity of a course document. Returns specific errors about different file format issues.
- *
- * Time: O(n), where n is the number of lines in the file
- * Space: O(k), where k is the largest line in the file
- * @param string filename to be searched and verified
- *
- * Code based on ony of my own public repositories, Hold_to_Craft
- * https://github.com/Kubia-Beta/Hold_to_Craft
- */
+//============================================================================
+// Static methods
+//============================================================================
+
+
+ /**
+  * Verifies file and data integrity and validity of a course document. Returns specific errors about different file format issues.
+  *
+  * Time: O(n), where n is the number of lines in the file
+  * Space: O(k), where k is the largest line in the file
+  * @param string filename to be searched and verified
+  *
+  * Code based on ony of my own public repositories, Hold_to_Craft
+  * https://github.com/Kubia-Beta/Hold_to_Craft
+  */
 void verifyFile(string& filename) {
 	string line = ""; // Comparison string, starts as empty
 	ifstream infile(filename) // Open the file
@@ -345,4 +378,108 @@ void verifyFile(string& filename) {
 			cerr << "Error in file verification. Please check the console log."
 			return
 	}
+}
+
+
+void DataStructureChoicePrinter(int& curLoaded, string& file) {
+	take choice from main
+		take file from main
+
+		if (curLoaded is 1) {
+			call vector print
+		}
+	if (curLoaded is 2) {
+		call hash table print
+	}
+	if (curLoaded is 3) {
+		call InOrder()
+	}
+	return;
+}
+
+void DataStructureChoiceFinder(int& curLoaded) {
+	take curLoaded from main
+		int searchKey = 100
+
+		if (curLoaded is 1) {
+			call vector search
+		}
+	if (curLoaded is 2) {
+		call hash table search
+	}
+	if (curLoaded is 3) {
+		call Search(searchKey)
+
+			return;
+	}
+}
+
+void DataStructureChoiceRemover(int& curLoaded) {
+	take curLoaded from main
+
+		if (curLoaded is 1) {
+			call vector remove
+		}
+	if (curLoaded is 2) {
+		call hash table remove
+	}
+	if (curLoaded is 3) {
+		call Remove(removeKey)
+
+			return;
+	}
+}
+
+int main(int argc, char* argv[]) {
+	string filename = "courses.txt";
+	int choice = 0;
+	int curLoaded = 0;
+	clock_t ticks;
+	
+	while (choice != 9) {
+		cout << "Menu:" << endl;
+		cout << "1. Load Vector" << endl;
+		cout << "2. Load Hash Table" << endl;
+		cout << "3. Load Tree" << endl;
+		cout << "4. Print loaded data" << endl;
+		cout << "5. Find selected data" << endl;
+		cout << "6. Remove selected data" << endl;
+		cout << "9. Exit" << endl;
+		cin >> choice;
+
+		switch (choice) {
+
+		case 1: // Load vector
+			CreateVectorFromFile(file); // Load the vector
+			SortVectorByCourseNumber();
+			curLoaded = 1; // Set flag for the vector as the loaded element
+			break;
+
+		case 2: // Load Hash Table
+			CreateHashFromFile(file);
+			SortHashByCourseNumber();
+			curLoaded = 2;
+			break;
+
+		case 3: // Load Binary Search Tree
+			call CreateBSTFromFile(file);
+			curLoaded = 3;
+			break;
+
+		case 4: // Print loaded data
+			DataStructureChoicePrinter(curLoaded);
+			break;
+			
+		case 5: // Find data
+			DataStructureChoiceFinder(curLoaded);
+			break;
+			
+		case 6: // Remove data
+			DataStructureChoiceRemover(curLoaded);
+			break;
+		}
+	}
+	cout << "Good bye." << endl;
+
+	return 0;
 }
