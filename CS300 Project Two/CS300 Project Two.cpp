@@ -1,13 +1,20 @@
-#include <algorithm>
-#include <climits>
+///////////////////////////
+// By:                 ///
+// Connor Sculthorpe  ///
+// 20 April 2024     ///
+///////////////////////
+
+//#include <algorithm>
+//#include <climits>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
-#include <time.h>
+//#include <string>
+//#include <time.h>
 #include <vector>
 #include <regex>
-#include <climits>
+//#include <climits>
+#include <Windows.h> // Console color
 
 using namespace std;
 void verifyFile(string &filename);
@@ -32,8 +39,24 @@ struct Course { // Structure to hold course information
 	}
 };
 
-//FIXME: lacks detailed collision management strategies
-//Incorporating clear processes for dealing with hash key collisions, through methods such as chaining or linear probing
+//============================================================================
+// Vector methods
+//============================================================================
+
+
+
+
+//============================================================================
+// Binary Search Tree methods
+//============================================================================
+
+
+
+
+//============================================================================
+// Hash Table methods
+//============================================================================
+
  /**
   * Time: O(n)
   * Space: O(n)
@@ -77,7 +100,7 @@ public:
 	~HashTable();
 	bool IsEmpty();
 	void InsertItem(Course course);
-	void RemoveItem(Course course);
+	void RemoveItem(string courseNumber);
 	void SearchHash(string courseNumber);
 	void PrintHash();
 	void PrintHashInOrder();
@@ -200,27 +223,35 @@ void HashTable::InsertItem(Course course) {
  * Space: O(1)
  * @param Course course: The course to be removed.
  */
-void HashTable::RemoveItem(Course course) {
-	int key = Hash(course.courseNumber); // Hash the course number by converting it to an integer
-	Node* node = &(nodes[key]);
+void HashTable::RemoveItem(string courseNumber) {
+	int aKey = Hash(courseNumber); // Hash the course number by converting it to an integer
+	Node* node = &(nodes[aKey]); // Get the first node at the hashed index
 
 
-	if (node->course.courseNumber == course.courseNumber) { // Check if the first node matches the course
-		nodes[key] = *(node->next); // Remove the first node by updating the pointer
+	if (node->course.courseNumber == courseNumber) { // Check if the first node matches the course
+		if (node->next == nullptr) { // If there is only one node
+			nodes[aKey] = Node(); // Clear the node
+			cout << "Course " << courseNumber << " removed." << endl;
+			return;
+		}
+		nodes[aKey] = *(node->next); // Remove the first node by updating the pointer
 		delete node;
+		nodes.erase(nodes.begin() + aKey); // erase node begin and key
 		return;
 	}
 
 	while (node->next != nullptr) { // Search for the course to remove
-		if (node->next->course.courseNumber == course.courseNumber) {
+		if (node->next->course.courseNumber == courseNumber) {
 			Node* temp = node->next;
 			node->next = temp->next;
 			delete temp;
+			cout << "Course " << courseNumber << " removed from chain." << endl;
 			return;
 		}
 		node = node->next;
 	}
-	// nodes.erase(nodes.begin() + key); // erase node begin and key
+	cout << "Course " << courseNumber << " not found, "
+		<< courseNumber << " was not removed." << endl;
 	return;
 }
 
@@ -374,7 +405,7 @@ void HashTable::CreateHashFromFile(string& file) {
 		//cout << "create hash step 3.42, course inserted" << endl;
 		prerequisites.clear(); // Clear the prerequisites vector for the next course
 	}
-	PrintHash(); // Print the hash table
+	cout << "Hash table created." << endl;
 	infile.close(); // Close the file
 }
 
@@ -389,27 +420,51 @@ private:
 	unique_ptr<HashTable> courseTable; // unique pointer to a hash table
 	// other data structures...
 
+	// Menu functions:
 	void DataStructureReleaser(int& curLoaded);
 	void DataStructureChoicePrinter(int& curLoaded);
-	void DataStructureChoiceFinder(int& curLoaded);
-	void DataStructureChoiceRemover(int& curLoaded);
+	void DataStructureChoiceFinder(int& curLoaded, string &searchTerm);
+	void DataStructureChoiceRemover(int& curLoaded, string &removeTerm);
+	void ConsoleColor(int color) { // Reference: https://stackoverflow.com/q/4053837/
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color); // Set the console text color
+	}
+	void MenuColorDefault() { 
+		ConsoleColor(7); // Set background color back to white/gray
+	}
+
+	// Hash table functions:
+	void CreateCourseTable(string &filename) {
+		courseTable = make_unique<HashTable>(); // create a new CourseTable
+		courseTable->CreateHashFromFile(filename); // load the CourseTable
+	}
+	void DeleteCourseTable() {
+		courseTable.reset();  // Deletes the CourseTable
+	}
+	void PrintCourseTable() {
+		courseTable->PrintHash();
+		courseTable->PrintHashInOrder();
+	}
+	void SearchCourseTable(string courseNumber) {
+		courseTable->SearchHash(courseNumber);
+	}
+	void RemoveCourseTable(string courseNumber) {
+		courseTable->RemoveItem(courseNumber);
+	}
+
+	// similar methods for other data structures...
+
+	// void Subdivider();
 
 public:
-	void CreateCourseTable() {
-		courseTable = std::make_unique<HashTable>(); // create a new CourseTable
-	}
 
-	void DeleteCourseTable() {
-		courseTable.reset();  // automatically deletes the CourseTable
-	}
+	void InputMenu(string &filename); // Takes user input 1-9 from cin and calls the appropriate function
 
-	void InputMenu(string &filename);
-	// similar methods for other data structures...
 };
 
 void Menu::InputMenu(string &filename) {
 	int choice = 0;
 	int curLoaded = 0;
+	string chosenCourseNumber = "CSCI300";
 	clock_t ticks;
 	while (choice != 9) {
 		cout << "Menu:" << endl;
@@ -419,6 +474,8 @@ void Menu::InputMenu(string &filename) {
 		cout << "4. Print loaded data" << endl;
 		cout << "5. Find selected data" << endl;
 		cout << "6. Remove selected data" << endl;
+		cout << "7. Change menu color" << endl;
+		cout << "8. Reset menu color" << endl;
 		cout << "9. Exit" << endl;
 		cin >> choice;
 
@@ -433,12 +490,7 @@ void Menu::InputMenu(string &filename) {
 
 		case 2: // Load Hash Table
 			DataStructureReleaser(curLoaded);
-			HashTable* courseTable;
-			courseTable = new HashTable();
-			courseTable->CreateHashFromFile(filename);
-			courseTable->PrintHashInOrder();
-			courseTable->SearchHash("CSCI300");
-			courseTable->SearchHash("CSCI900");
+			CreateCourseTable(filename); // Load the hash table
 			curLoaded = 2;
 			break;
 
@@ -453,13 +505,27 @@ void Menu::InputMenu(string &filename) {
 			break;
 
 		case 5: // Find data
-			DataStructureChoiceFinder(curLoaded);
+			DataStructureChoiceFinder(curLoaded, chosenCourseNumber);
 			break;
 
 		case 6: // Remove data
-			DataStructureChoiceRemover(curLoaded);
+			DataStructureChoiceRemover(curLoaded, chosenCourseNumber);
+			break;
+		case 7: // Change menu color
+			// Note that cin is unformatted, you would need printf to print color
+			ConsoleColor(14); // Set font color to tan
+			cout << "\nSmall things like this remind me of my computer growing up."
+				<< " Yet this function was added in 2015 to Windows 10!" << "\nSource: ";
+			ConsoleColor(11); // Set the font color to blue for the link
+			cout << "https://learn.microsoft.com/en-us/windows/console/ecosystem-roadmap" << endl;
+			ConsoleColor(14); // Set font color back to tan
+			cout << "It's the small joys that keep programming interesting, even when you're new like me." << endl;
+			break;
+		case 8: // Reset menu color
+			MenuColorDefault();
 			break;
 		}
+		cout << endl; // Cosmetic line break
 	}
 	cout << "Good bye." << endl;
 	return;
@@ -467,29 +533,28 @@ void Menu::InputMenu(string &filename) {
 
 void Menu::DataStructureChoicePrinter(int& curLoaded) {
 	//take choice from main
-	//	take file from main
 
 	//	if (curLoaded is 1) {
 	//		call vector print
 	//	}
-	//if (curLoaded is 2) {
-	//	call hash table print
-	//}
+	if (curLoaded == 2) {
+		PrintCourseTable();
+	}
 	//if (curLoaded is 3) {
 	//	call InOrder()
 	return;
 }
 
-void Menu::DataStructureChoiceFinder(int& curLoaded) {
+void Menu::DataStructureChoiceFinder(int &curLoaded, string &searchTerm) {
 	//take curLoaded from main
 	//	int searchKey = 100
 
 	//	if (curLoaded is 1) {
 	//		call vector search
 	//	}
-	//if (curLoaded is 2) {
-	//	call hash table search
-	//}
+	if (curLoaded == 2) {
+		SearchCourseTable(searchTerm);
+	}
 	//if (curLoaded is 3) {
 	//	call Search(searchKey)
 
@@ -497,15 +562,15 @@ void Menu::DataStructureChoiceFinder(int& curLoaded) {
 	//}
 }
 
-void Menu::DataStructureChoiceRemover(int& curLoaded) {
+void Menu::DataStructureChoiceRemover(int &curLoaded, string &removeTerm) {
 	//take curLoaded from main
 
 	//	if (curLoaded is 1) {
 	//		call vector remove
 	//	}
-	//if (curLoaded is 2) {
-	//	call hash table remove
-	//}
+	if (curLoaded == 2) {
+		RemoveCourseTable(removeTerm);
+	}
 	//if (curLoaded is 3) {
 	//	call Remove(removeKey)
 
