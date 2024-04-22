@@ -1,4 +1,4 @@
-///////////////////////////
+﻿///////////////////////////
 // By:                 ///
 // Connor Sculthorpe  ///
 // 20 April 2024     ///
@@ -18,6 +18,12 @@
 
 using namespace std;
 void verifyFile(string &filename);
+
+//============================================================================
+// Course methods
+//============================================================================
+// Normally you would keep these in separate files, included with a header. It is included here to keep it to one file.
+// Security worries make for strange constraints. ZIP's are an reasonable worry.
 
 struct Course { // Structure to hold course information
 	string courseNumber;
@@ -39,11 +45,114 @@ struct Course { // Structure to hold course information
 	}
 };
 
+
 //============================================================================
 // Vector methods
 //============================================================================
 
 
+class CourseVector {
+	private:
+	vector<Course> courses;
+
+	public:
+		void Insert(Course course);
+		void Remove(string courseNumber);
+		void Search(string courseNumber);
+		void Print();
+		void SortByCourseNumber();
+};
+
+/**
+ * Insert a course into the vector
+ *
+ * Time: O()
+ * Space: O()
+ * @param Course course to be inserted
+ */
+void CourseVector::Insert(Course course) {
+	courses.push_back(course);
+	return;
+}
+
+
+/**
+ * Remove a course from the vector
+ * Reference: https://www.geeksforgeeks.org/std-find-in-cpp/
+ *
+ * Time: O()
+ * Space: O()
+ * @param string courseNumber to be removed
+ */
+void CourseVector::Remove(string courseNumber) {
+	auto it = find_if(courses.begin(), courses.end(), [&](const Course& course) {
+		return course.courseNumber == courseNumber;
+		});
+	if (it != courses.end()) {
+		courses.erase(it);
+	}
+	else {
+		cout << "Course " << courseNumber << " not found." << endl;
+	}
+	return;
+}
+
+
+/**
+ * Search for a course in the vector
+ *
+ * Time: O()
+ * Space: O()
+ * @param string courseNumber to be searched for
+ */
+void CourseVector::Search(string courseNumber) {
+	auto it = find_if(courses.begin(), courses.end(), [&](const Course& course) {
+		return course.courseNumber == courseNumber;
+		});
+	if (it != courses.end()) {
+		cout << "Course found." << endl;
+		cout << "Course title: " << it->courseTitle
+			<< ", Course number: " << it->courseNumber
+			<< ", Course prerequisites: ";
+		for (auto i : it->coursePrerequisites) {
+			cout << i << ','; // Print each prerequisite
+		}
+		cout << endl;
+	}
+	else {
+		cout << "Course " << courseNumber << " not found." << endl;
+	}
+}
+
+/**
+ * Print the contents of the vector
+ *
+ * Time: O()
+ * Space: O()
+ */
+void CourseVector::Print() {
+	for (Course course : courses) {
+		cout << course.courseNumber << ": " << course.courseTitle << " | ";
+		for (auto i : course.coursePrerequisites) {
+			cout << i << ',';
+		}
+		cout << endl;
+	}
+	return;
+}
+
+/**
+ * Sort the vector by course number
+ *
+ * Time: O(n log n)
+ * Space: O(1)
+ */
+void CourseVector::SortByCourseNumber() {
+	sort(courses.begin(), courses.end(), [](const Course& a, const Course& b) {
+		return a.courseNumber < b.courseNumber;
+	});
+	return;
+}
 
 
 //============================================================================
@@ -52,44 +161,354 @@ struct Course { // Structure to hold course information
 
 
 
-
-//============================================================================
-// Hash Table methods
-//============================================================================
-
- /**
-  * Time: O(n)
-  * Space: O(n)
-  */
-class HashTable {
-private:
-	const unsigned int DEFAULT_SIZE = 97; // Largest 2 digit prime as a default constant
-
+class BST {
 	struct Node {
 		Course course;
-		unsigned int key; // Hash key, obtained by hashing the course number after converting it to an integer
-		Node* next;
-
+		Node* left;
+		Node* right;
+		int height; // Field to store AVL implementation height association
 
 		Node() { // Default constructor
-			key = UINT_MAX; // 0xFFFFFFFF
-			next = nullptr;
+			left = nullptr;
+			right = nullptr;
+			height = 1; // Default height is 1
 		}
 
 		Node(Course aCourse) : Node() { // Call the default constructor when calling the constructor
 			course = aCourse;
 		}
+	};
+private:
+	Node* root;
+	void InsertItem(Node* node, Course aCourse);
+	void InOrderHelper(Node* node);
+	void PreOrderHelper(Node* node);
+	void PostOrderHelper(Node* node);
+	void DeconstructorHelper(Node* node);
+	Node* removeNode(Node* node, string courseNumber);
+	int TreeSize;
+	void vectorPrinter(vector<string> Vector);
 
-		Node(Course aCourse, int aKey) : Node(aCourse) { // Continue calling previous constructors
+public:
+	BST();
+	virtual ~BST();
+	void InOrder();
+	void PostOrder();
+	void PreOrder();
+	void Insert(Course aCourse);
+	void Remove(string courseNumber);
+	int Size();
+	void Search(string courseNumber);
+};
+
+/**
+ * Adds a node with course to the tree
+ *
+ * Time: O(log n)
+ * Space: O(n)
+ * @param Node* node to be referenced from
+ * @param Course aCourse to be added
+ */
+void BST::InsertItem(Node* node, Course aCourse) {
+	if (node->course.courseTitle > aCourse.courseTitle) { // If the existing course number is greater than the one to be inserted
+		if (node->left == nullptr) { // Left subtree has no lesser node
+			node->left = new Node(aCourse); // Construct a new node and make it the left pointer of the current node
+			this->TreeSize = this->TreeSize + 1; // Tree size has increased by one node
+		}
+		else { // Left not nullptr, exists
+			InsertItem(node->left, aCourse); // Recurse leftward
+		}
+	}
+	else { // Existing course number is less than the one to be inserted
+		if (node->right == nullptr) { // Right subtree has no lesser node
+			node->right = new Node(aCourse); // Construct a new node and make it the right pointer of the current node
+			this->TreeSize = this->TreeSize + 1; // Tree size has increased by one node
+		}
+		else { // Right nmot nullptr, exists
+			InsertItem(node->right, aCourse); // Recurse rightward
+		}
+	}
+}
+
+/**
+ * Passes root to the helper function to recursively traverse left, visit root, traverse right
+ *
+ * Time: O(n^2), θ(n log n)
+ * Space: O(n)
+ * @param Node* node to be displayed
+ */
+void BST::InOrder() {
+	cout << "\nBinary Search Tree In Order:" << endl;
+	this->InOrderHelper(root);
+}
+
+/**
+ * Recursively traverse left, visit root, traverse right
+ *
+ * Time: O(n^2), θ(n log n)
+ * Space: O(n)
+ * @param Node* node to be displayed
+ */
+void BST::InOrderHelper(Node* node) {
+	if (node != nullptr) {
+		InOrderHelper(node->left); // Recurse leftward to print all items before
+		cout << node->course.courseNumber << ": " << node->course.courseTitle << " | ";
+		vectorPrinter(node->course.coursePrerequisites);
+		cout << endl;
+		InOrderHelper(node->right); // Now recurse rightward now that we have printed all nodes to the left and the input node
+	}
+}
+
+/**
+ * Passes root to the helper function to recursively visit root, traverse left, traverse right
+ * Time: O(n^2), θ(n log n)
+ * Space: O(n)
+ */
+void BST::PreOrder() {
+	cout << "\nBinary Search Tree Pre Order:" << endl;
+	this->PreOrderHelper(root);
+}
+
+/**
+ * Recursively visit root, traverse left, traverse right
+ *
+ * Time: O(n^2), θ(n log n)
+ * Space: O(n)
+ * @param Node* node to be displayed
+ */
+void BST::PreOrderHelper(Node* node) { //FIXME: Add code comments to explain the algorithm, then add to all Order type
+	if (node != nullptr) {
+		cout << node->course.courseNumber << ": " << node->course.courseTitle << " | ";
+		vectorPrinter(node->course.coursePrerequisites);
+		cout << endl;
+		PreOrderHelper(node->left);
+		PreOrderHelper(node->right);
+	}
+}
+
+/**
+ * Passes root to the helper function to recursively traverse left, traverse right, visit root
+ * Time: O(n^2), θ(n log n)
+ * Space: O(n)
+ */
+void BST::PostOrder() {
+	cout << "\nBinary Search Tree Post Order:" << endl;
+	this->PostOrderHelper(root);
+}
+
+/**
+ * Recursively traverse left, traverse right, visit root
+ *
+ * Time: O(n^2), θ(n log n)
+ * Space: O(n)
+ * @param Node* node to be displayed
+ */
+void BST::PostOrderHelper(Node* node) {
+	if (node != nullptr) {
+		cout << node->course.courseNumber << ": " << node->course.courseTitle << " | ";
+		vectorPrinter(node->course.coursePrerequisites);
+		cout << endl;
+		PostOrderHelper(node->left);
+		PostOrderHelper(node->right);
+	}
+}
+
+/**
+ * Default constructor
+ * Time: O(1)
+ * Space: O(1)
+ */
+BST::BST() {
+	this->root = nullptr;
+	this->TreeSize = 0;
+}
+
+/**
+ * Destructor
+ * Time: O(n)
+ * Space: O(n), θ(log n)
+ */
+BST::~BST() {
+	DeconstructorHelper(this->root);
+}
+
+/**
+ * Recursively deletes the nodes of a tree
+ *
+ * Time: O(n)
+ * Space: O(n), θ(log n)
+ * @param Node* node to be deleted
+ */
+void BST::DeconstructorHelper(Node* node) {
+	if (node != nullptr) {
+		DeconstructorHelper(node->left);
+		DeconstructorHelper(node->right);
+		delete node;
+		node = nullptr;
+		this->TreeSize = this->TreeSize - 1;
+	}
+}
+
+/**
+ * Insert a course
+ *
+ * Time: O(log n)
+ * Space: O(n)
+ * @param int Course to be inserted
+ */
+void BST::Insert(Course aCourse) {
+	if (root == nullptr) { // Root does not exist
+		root = new Node(aCourse); // Make the new node root
+		this->TreeSize = this->TreeSize + 1;
+	}
+	else {
+		InsertItem((this->root), aCourse); // Add by passing the root as reference since node was not specified
+	}
+}
+
+/**
+ * Recursively remove a course
+ * Passes node information to removeNode(Node* node, int courseNumber).
+ *
+ * Time: O(n)
+ * Space: O(n), θ(log n)
+ * @param int courseNumber to be removed
+ */
+void BST::Remove(string courseNumber) {
+	this->removeNode(root, courseNumber); // Calls the helper function to remove the node
+	cout << "Removed " + courseNumber << endl; // Outputs a message indicating the successful removal
+	this->TreeSize = this->TreeSize - 1; // Decrements the size of the tree
+	return;
+}
+
+
+/**
+ * Recursively remove a course from the tree
+ *
+ * Time: O(n)
+ * Space: O(n), θ(log n)
+ * @param Node* node to reference from
+ * @param int Course to be removed
+ */
+BST::Node* BST::removeNode(Node* node, string courseNumber) {
+	if (node == nullptr) { // If we have a blank for a node
+		return nullptr; // Then do not try to remove it
+	}
+
+	if (node->course.courseNumber < courseNumber) { // If the existing course number is greater than the one to be removed
+		node->left = removeNode(node->left, courseNumber); // Recurse down and replace the removed node
+	}
+	else if (node->course.courseNumber > courseNumber) { // Course for removal is larger, go right
+		node->right = removeNode(node->right, courseNumber); // Recurse down and replace the removed node
+	}
+	else { // Match found
+		if (node->left == nullptr && node->right == nullptr) { // leaf case
+			delete node;
+			node = nullptr; // Keep the pointer safe
+			return nullptr;
+		}
+		else if (node->left != nullptr && node->right == nullptr) { // Right is null case ("Case 4")
+			Node* temp = node;
+			node = node->left;
+			delete temp;
+		}
+		else if (node->left == nullptr && node->right != nullptr) { // Left is null case ("Case 3")
+			Node* temp = node;
+			node = node->right;
+		}
+		else { // Two children case ("Case 1")
+			Node* temp = node->right;
+			while (temp->left != nullptr) {  // Traverse left
+				temp = temp->left;
+			}
+			node->course = temp->course;
+			node->right = removeNode(node->right, temp->course.courseNumber); // Recursively remove successor since it was copied
+		}
+	}
+	return node;
+}
+
+/**
+ * Searches a course from the tree
+ *
+ * Time: O(n)
+ * Space: O(n)
+ * @param int Course to be searched for
+ */
+void BST::Search(string courseNumber) {
+	Node* currNode = this->root;
+
+	while (currNode != nullptr) {
+		// Compare the search courseNumber against the currently held courseNumber
+		if (currNode->course.courseNumber == courseNumber) { // Found the course
+			cout << "Course found.\n" << "Course title: " << currNode->course.courseTitle
+				<< ", Course number: " << currNode->course.courseNumber << ", Course prerequisites: ";
+			vectorPrinter(currNode->course.coursePrerequisites);
+			return;
+			//return currNode->course; // Return the currently held course that matched
+		}
+		else if (currNode->course.courseNumber < courseNumber) { // The check is less than what was checked against
+			currNode = currNode->left; // Shift loop left
+		}
+		else { // current > courseNumber checked against
+			currNode = currNode->right; // Shift loop right
+		} // Continue looping
+	} // Current is nullptr, match is not found
+
+	cout << "Course " << courseNumber << " not found." << endl;
+	return;
+}
+
+/**
+ * Get the size of the current Binary Search Tree
+ * Time: O(1)
+ * Space: O(1)
+ */
+int BST::Size() {
+	return this->TreeSize;
+}
+
+void BST::vectorPrinter(vector<string> Vector) {
+	for (auto i : Vector) {
+		cout << i << ',';
+	}
+}
+
+
+//============================================================================
+// Hash Table methods
+//============================================================================
+
+
+class HashTable {
+private:
+	const unsigned int DEFAULT_SIZE = 97; // Largest 2 digit prime as a default constant
+
+	struct htNode { // Structure to hold a course and a pointer to the next node
+		Course course;
+		unsigned int key; // Hash key, obtained by hashing the course number after converting it to an integer
+		htNode* next;
+
+
+		htNode() { // Default constructor
+			key = UINT_MAX; // 0xFFFFFFFF
+			next = nullptr;
+		}
+
+		htNode(Course aCourse) : htNode() { // Call the default constructor when calling the constructor
+			course = aCourse;
+		}
+
+		htNode(Course aCourse, int aKey) : htNode(aCourse) { // Continue calling previous constructors
 			key = aKey;
 		}
 
-		Node(Course aCourse, int aKey, Node* aNext) : Node(aCourse, aKey) { // Continue calling previous constructors
+		htNode(Course aCourse, int aKey, htNode* aNext) : htNode(aCourse, aKey) { // Continue calling previous constructors
 			next = aNext;
 		}
 	};
 
-	vector<Node> nodes; // Vector to hold the hash table
+	vector<htNode> nodes; // Vector to hold the hash table
 	unsigned int tableSize = DEFAULT_SIZE;
 	unsigned int Hash(string courseNumber);
 	int getSize() const { return nodes.size(); } // debug function
@@ -104,7 +523,6 @@ public:
 	void SearchHash(string courseNumber);
 	void PrintHash();
 	void PrintHashInOrder();
-	void CreateHashFromFile(string &file);
 };
 
 
@@ -116,10 +534,10 @@ public:
  * Space: O(1)
  */
 HashTable::HashTable() {
-	nodes.resize(tableSize, Node()); // Resize the vector to the default size and initialize each node
+	nodes.resize(tableSize, htNode()); // Resize the vector to the default size and initialize each node
 	tableSize = nodes.size(); // Set the table size to the size of the vector
-	for (Node& node : nodes) { // Initialize each node in the vector
-		node = Node();
+	for (htNode& node : nodes) { // Initialize each node in the vector
+		node = htNode();
 	}
 }
 
@@ -142,10 +560,10 @@ HashTable::HashTable(unsigned int size) {
  * Space: O(1)
  */
 HashTable::~HashTable() {
-	for (Node& node : nodes) {
-		Node* current = node.next;
+	for (htNode& node : nodes) {
+		htNode* current = node.next;
 		while (current) {
-			Node* temp = current;
+			htNode* temp = current;
 			current = current->next;
 			delete temp;
 		}
@@ -177,7 +595,7 @@ unsigned int HashTable::Hash(string courseNumber) {
  * @return bool: True if the hash table is empty, false otherwise.
  */
 bool HashTable::IsEmpty() {
-	for (const Node node : nodes) {
+	for (const htNode node : nodes) {
 		if (node.key != UINT_MAX) {
 			return false; // Non-empty slot found
 		}
@@ -200,10 +618,10 @@ void HashTable::InsertItem(Course course) {
 		//cout << "insert step 1.5" << endl;
 	}
 	//cout << "insert step 2" << endl;
-	Node* node = &(nodes.at(key)); // Get the first node at the hashed index
+	htNode* node = &(nodes.at(key)); // Get the first node at the hashed index
 	//cout << "insert step 3" << endl;
 	if (node->key == UINT_MAX) { // Is empty
-		*node = Node(course, key); // Add the course to the empty slot
+		*node = htNode(course, key); // Add the course to the empty slot
 		//cout << "\nCourse added to the hash table: " << course.courseNumber
 			//<< ", Title: " << course.courseTitle << ", Key: " << key
 			//<< ", Hash: " << Hash(course.courseNumber) << endl;
@@ -212,7 +630,7 @@ void HashTable::InsertItem(Course course) {
 		while (node->next != nullptr) { // Traverse to find the end
 			node = node->next;
 		}
-		node->next = new Node(course, key); // Add a new node to the end
+		node->next = new htNode(course, key); // Add a new node to the end
 	}
 }
 
@@ -225,12 +643,12 @@ void HashTable::InsertItem(Course course) {
  */
 void HashTable::RemoveItem(string courseNumber) {
 	int aKey = Hash(courseNumber); // Hash the course number by converting it to an integer
-	Node* node = &(nodes[aKey]); // Get the first node at the hashed index
+	htNode* node = &(nodes[aKey]); // Get the first node at the hashed index
 
 
 	if (node->course.courseNumber == courseNumber) { // Check if the first node matches the course
 		if (node->next == nullptr) { // If there is only one node
-			nodes[aKey] = Node(); // Clear the node
+			nodes[aKey] = htNode(); // Clear the node
 			cout << "Course " << courseNumber << " removed." << endl;
 			return;
 		}
@@ -242,7 +660,7 @@ void HashTable::RemoveItem(string courseNumber) {
 
 	while (node->next != nullptr) { // Search for the course to remove
 		if (node->next->course.courseNumber == courseNumber) {
-			Node* temp = node->next;
+			htNode* temp = node->next;
 			node->next = temp->next;
 			delete temp;
 			cout << "Course " << courseNumber << " removed from chain." << endl;
@@ -266,19 +684,19 @@ void HashTable::RemoveItem(string courseNumber) {
 void HashTable::SearchHash(string courseNumber) {
 	unsigned int aKey = Hash(courseNumber); // Hash the course number
 	Course aCourse; // Create a null course to return if the course is not found
-	Node* node = &(nodes[aKey]); // Get the first node at the hashed index
+	htNode* current = &(nodes[aKey]); // Get the first node at the hashed index
 
-	while (node != nullptr) { // Traverse the linked list
-		if (node->key != UINT_MAX && courseNumber == node->course.courseNumber) { // Check if the course number matches
-			cout << "\nCourse found.\n" << "Course title: " << node->course.courseTitle
-				<< ", Course number: " << node->course.courseNumber << ", Course prerequisites: ";
-			for (auto i : node->course.coursePrerequisites) {
+	while (current != nullptr) { // Traverse the linked list
+		if (current->key != UINT_MAX && courseNumber == current->course.courseNumber) { // Check if the course number matches
+			cout << "\nCourse found.\n" << current->course.courseTitle
+				<< "  || " << current->course.courseNumber << " || ";
+			for (auto i : current->course.coursePrerequisites) {
 				cout << i << ',';
 			}
 			cout << endl;
 			return; // Course found
 		}
-		node = node->next; // Move to the next node
+		current = current->next; // Move to the next node
 	}
 	cout << "Course " << courseNumber <<" not found." << endl;
 	return; // Course not found
@@ -291,14 +709,11 @@ void HashTable::SearchHash(string courseNumber) {
  * Space: O(n)
  */
 void HashTable::PrintHash() {
-	cout << "\nHash Table:" << endl;
 	for (unsigned int i = 0; i < nodes.size(); ++i) {
-		Node* current = &(nodes.at(i));
+		htNode* current = &(nodes.at(i));
 		while (current != nullptr) {
 			if (current->key != UINT_MAX) {
-				cout << "Course title: " << current->course.courseTitle
-					<< ", Course number: " << current->course.courseNumber << ", Key: "
-					<< current->key << ", Course prerequisites: ";
+				cout << current->course.courseNumber << ": " << current->course.courseTitle << " | ";
 				for (auto i : current->course.coursePrerequisites) {
 					cout << i << ',';
 				}
@@ -319,11 +734,11 @@ void HashTable::PrintHash() {
  */
 void HashTable::PrintHashInOrder() {
 	vector<Course> tempCourses; // Create a temp vector to hold the course information while we sort it
-	for (const Node& node : nodes) { // Extract all courses from the hash table
+	for (const htNode& node : nodes) { // Extract all courses from the hash table
 		if (node.key != UINT_MAX) { // Check if the node is not empty
 			tempCourses.push_back(node.course); // Add the course to the vector
 		}
-		Node* current = node.next; // Start at the first node
+		htNode* current = node.next; // Start at the first node
 		while (current) { // Traverse the linked list
 			tempCourses.push_back(current->course); // Add the course to the vector
 			current = current->next; // Move to the next node
@@ -335,11 +750,9 @@ void HashTable::PrintHashInOrder() {
 		return a.courseTitle < b.courseTitle;
 	});
 
-	cout << "\nHash Table In Order:" << endl;
 	// Print the vector
 	for (const Course& course : tempCourses) { // Print each course in the vector
-		cout << "Course title: " << course.courseTitle
-			 << ", Course number: " << course.courseNumber << ", Course prerequisites: ";
+		cout << course.courseNumber << ": " << course.courseTitle << " | ";
 		for (const string& prerequisite : course.coursePrerequisites) { // Print each prerequisite
 			cout << prerequisite << ',';
 		}
@@ -347,14 +760,193 @@ void HashTable::PrintHashInOrder() {
 	}
 }
 
+
+//============================================================================
+// Menu methods
+//============================================================================
+
+
+class Menu {
+private:
+	unique_ptr<CourseVector> courseVector; // unique pointer to a vector
+	unique_ptr<BST> courseBST; // unique pointer to a binary search tree
+	unique_ptr<HashTable> courseTable; // unique pointer to a hash table
+
+	// Menu functions:
+	void DataStructureReleaser(int &curLoaded);
+	void DataStructureChoicePrinter(int &curLoaded);
+	void DataStructureChoiceFinder(int &curLoaded, string &searchTerm);
+	void DataStructureChoiceRemover(int &curLoaded, string &removeTerm);
+	void ConsoleColor(int color) { // Reference: https://stackoverflow.com/q/4053837/
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color); // Set the console text color
+	}
+	void MenuColorDefault() { 
+		ConsoleColor(7); // Set background color back to white/gray
+	}
+	void CreateFromFile(string &filename, int &currLoaded);
+	void LoadIntoStructure(int &currLoaded, Course &course);
+	void RelativeSpeeds(string &filename); // Loads every data structure with the same data and compares the speeds of various operations
+	// Note: This function will load all the data multiple times and call every function multiple times, so it will 'spam'
+
+	// Vector functions:
+	void CreateVector() {
+		courseVector = make_unique<CourseVector>(); // create a new vector
+		cout << "Vector created." << endl;
+	}
+	void DeleteVector() {
+		courseVector.reset(); // Deletes the vector
+	}
+	void PrintVector() {
+		cout << "\nVector:\n"
+			<< "Course Number: Course Title | Course Prerequisites, " << endl;
+		courseVector->Print();
+	}
+	void SearchVector(string& courseNumber) {
+		courseVector->Search(courseNumber);
+	}
+	void RemoveVector(string& courseNumber) {
+		courseVector->Remove(courseNumber);
+	}
+
+	// Binary Search Tree functions:
+	void CreateBST() {
+		courseBST = make_unique<BST>(); // create a new BST
+		cout << "Binary Search Tree created." << endl;
+	}
+	void DeleteBST() { // 
+		courseBST.reset(); // Deletes the BST
+	}
+	void PrintBST() {
+		cout << "\nBinary Search Tree:\n"
+			<< "Course Number: Course Title | Course Prerequisites, " << endl;
+		courseBST->InOrder();
+		courseBST->PreOrder();
+		courseBST->PostOrder();
+	}
+	void SearchBST(string &courseNumber) {
+		courseBST->Search(courseNumber);
+	}
+	void RemoveBST(string &courseNumber) {
+		courseBST->Remove(courseNumber);
+	}
+
+	// Hash table functions:
+	void CreateCourseTable() {
+		courseTable = make_unique<HashTable>(); // create a new CourseTable
+		//CreateFromFile(filename, currLoaded); // load the CourseTable
+		cout << "Hash table created." << endl;
+	}
+	void DeleteCourseTable() {
+		courseTable.reset();  // Deletes the CourseTable
+	}
+	void PrintCourseTable() {
+		cout << "\nHash Table:\n"
+			<< "Course Number: Course Title | Course Prerequisites, " << endl;
+		courseTable->PrintHash();
+		cout << "\nHash Table in order:\n"
+			<< "Course Number: Course Title | Course Prerequisites, " << endl;
+		courseTable->PrintHashInOrder();
+	}
+	void SearchCourseTable(string courseNumber) {
+		courseTable->SearchHash(courseNumber);
+	}
+	void RemoveCourseTable(string courseNumber) {
+		courseTable->RemoveItem(courseNumber);
+	}
+
+	// void Subdivider();
+
+public:
+
+	void InputMenu(string &filename); // Takes user input 1-9 from cin and calls the appropriate function
+
+};
+
+void Menu::InputMenu(string &filename) {
+	int choice = 0;
+	int curLoaded = 0;
+	string chosenCourseNumber = "CSCI300";
+	while (choice != 9) {
+		cout << "Menu:" << endl;
+		cout << "1. Load Vector" << endl;
+		cout << "2. Load Hash Table" << endl;
+		cout << "3. Load Tree" << endl;
+		cout << "4. Print loaded data" << endl;
+		cout << "5. Find selected data" << endl;
+		cout << "6. Remove selected data" << endl;
+		//cout << "7. Change menu color" << endl;
+		//cout << "8. Reset menu color" << endl;
+		cout << "7. Display relative data structure speeds" << endl; // FIXME: Add this function
+		cout << "9. Exit" << endl;
+		cin >> choice;
+
+		switch (choice) {
+
+		case 1: // Load vector
+			DataStructureReleaser(curLoaded);
+			curLoaded = 1; // Set flag for the vector as the loaded element
+			CreateFromFile(filename, curLoaded); // Load the vector
+			//SortVectorByCourseNumber();
+			
+			break;
+
+		case 2: // Load Hash Table // FIXME: Throws an exception when trying to switch data types? Debug this one
+			DataStructureReleaser(curLoaded);
+			curLoaded = 2; // Set flag for the hash table as the loaded element
+			CreateFromFile(filename, curLoaded); // Load the hash table
+			
+			break;
+
+		case 3: // Load Binary Search Tree
+			DataStructureReleaser(curLoaded);
+			curLoaded = 3; // Set flag for the binary search tree as the loaded element
+			CreateFromFile(filename, curLoaded); // Load the binary search tree
+			
+			break;
+
+		case 4: // Print loaded data
+			DataStructureChoicePrinter(curLoaded);
+			break;
+
+		case 5: // Find data
+			DataStructureChoiceFinder(curLoaded, chosenCourseNumber);
+			break;
+
+		case 6: // Remove data
+			DataStructureChoiceRemover(curLoaded, chosenCourseNumber);
+			break;
+			//FIXME: Use menu 7/8 to cin chosenCourseNumber
+		case 7: // Display relative data structure speeds
+
+		case 0: // Change menu color
+			// Note that cin is unformatted, you would need printf to print color
+			ConsoleColor(14); // Set font color to tan
+			cout << "\nSmall things like this remind me of my computer growing up."
+				<< " Yet this function was added in 2015 to Windows 10!" << "\nSource: ";
+			ConsoleColor(11); // Set the font color to blue for the link
+			cout << "https://learn.microsoft.com/en-us/windows/console/ecosystem-roadmap" << endl;
+			ConsoleColor(14); // Set font color back to tan
+			cout << "It's the small joys that keep programming interesting, even when you're new like me." << endl;
+			break;
+		//case 8: // Reset menu color
+		//	MenuColorDefault();
+		//	break;
+		}
+		cout << endl; // Cosmetic line break
+	}
+	cout << "Good bye." << endl;
+	return;
+}
+
+
 /**
-  * Opens a file, reads its data, and parses each line and adds it to the Hash Table
-  *
-  * Time: O(n)
-  * Space: O(n)
-  * @param string filename to be opened
-  */
-void HashTable::CreateHashFromFile(string& file) {
+ * Opens a file, reads its data, and parses each line and adds it to the Hash Table
+ *
+ * Time: O(n)
+ * Space: O(n)
+ * @param string filename to be opened
+ */
+void Menu::CreateFromFile(string &file, int &currLoaded) {
 	string line = ""; // Holds each line read from file
 	//cout << "create hash step 1" << endl;
 	verifyFile(file); // Verify the file is in the correct format
@@ -401,194 +993,167 @@ void HashTable::CreateHashFromFile(string& file) {
 		//cout << "create hash step 3.4, end of line" << endl;
 		Course course(number, title, prerequisites); // Create a course object with the parsed data
 		//cout << "create hash step 3.41, course created" << endl;
-		InsertItem(course); // FIXME: Send to function that discerns the data structure, not just hash table
+		LoadIntoStructure(currLoaded, course); // FIXME: Send to function that discerns the data structure, not just hash table
 		//cout << "create hash step 3.42, course inserted" << endl;
 		prerequisites.clear(); // Clear the prerequisites vector for the next course
 	}
-	cout << "Hash table created." << endl;
 	infile.close(); // Close the file
 }
 
-
-//============================================================================
-// Menu methods
-//============================================================================
-
-
-class Menu {
-private:
-	unique_ptr<HashTable> courseTable; // unique pointer to a hash table
-	// other data structures...
-
-	// Menu functions:
-	void DataStructureReleaser(int& curLoaded);
-	void DataStructureChoicePrinter(int& curLoaded);
-	void DataStructureChoiceFinder(int& curLoaded, string &searchTerm);
-	void DataStructureChoiceRemover(int& curLoaded, string &removeTerm);
-	void ConsoleColor(int color) { // Reference: https://stackoverflow.com/q/4053837/
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color); // Set the console text color
-	}
-	void MenuColorDefault() { 
-		ConsoleColor(7); // Set background color back to white/gray
-	}
-
-	// Hash table functions:
-	void CreateCourseTable(string &filename) {
-		courseTable = make_unique<HashTable>(); // create a new CourseTable
-		courseTable->CreateHashFromFile(filename); // load the CourseTable
-	}
-	void DeleteCourseTable() {
-		courseTable.reset();  // Deletes the CourseTable
-	}
-	void PrintCourseTable() {
-		courseTable->PrintHash();
-		courseTable->PrintHashInOrder();
-	}
-	void SearchCourseTable(string courseNumber) {
-		courseTable->SearchHash(courseNumber);
-	}
-	void RemoveCourseTable(string courseNumber) {
-		courseTable->RemoveItem(courseNumber);
-	}
-
-	// similar methods for other data structures...
-
-	// void Subdivider();
-
-public:
-
-	void InputMenu(string &filename); // Takes user input 1-9 from cin and calls the appropriate function
-
-};
-
-void Menu::InputMenu(string &filename) {
-	int choice = 0;
-	int curLoaded = 0;
-	string chosenCourseNumber = "CSCI300";
-	clock_t ticks;
-	while (choice != 9) {
-		cout << "Menu:" << endl;
-		cout << "1. Load Vector" << endl;
-		cout << "2. Load Hash Table" << endl;
-		cout << "3. Load Tree" << endl;
-		cout << "4. Print loaded data" << endl;
-		cout << "5. Find selected data" << endl;
-		cout << "6. Remove selected data" << endl;
-		cout << "7. Change menu color" << endl;
-		cout << "8. Reset menu color" << endl;
-		cout << "9. Exit" << endl;
-		cin >> choice;
-
-		switch (choice) {
-
-		case 1: // Load vector
-			DataStructureReleaser(curLoaded);
-			//CreateVectorFromFile(file); // Load the vector
-			//SortVectorByCourseNumber();
-			curLoaded = 1; // Set flag for the vector as the loaded element
-			break;
-
-		case 2: // Load Hash Table
-			DataStructureReleaser(curLoaded);
-			CreateCourseTable(filename); // Load the hash table
-			curLoaded = 2;
-			break;
-
-		case 3: // Load Binary Search Tree
-			DataStructureReleaser(curLoaded);
-			//call CreateBSTFromFile(file);
-			curLoaded = 3;
-			break;
-
-		case 4: // Print loaded data
-			DataStructureChoicePrinter(curLoaded);
-			break;
-
-		case 5: // Find data
-			DataStructureChoiceFinder(curLoaded, chosenCourseNumber);
-			break;
-
-		case 6: // Remove data
-			DataStructureChoiceRemover(curLoaded, chosenCourseNumber);
-			break;
-		case 7: // Change menu color
-			// Note that cin is unformatted, you would need printf to print color
-			ConsoleColor(14); // Set font color to tan
-			cout << "\nSmall things like this remind me of my computer growing up."
-				<< " Yet this function was added in 2015 to Windows 10!" << "\nSource: ";
-			ConsoleColor(11); // Set the font color to blue for the link
-			cout << "https://learn.microsoft.com/en-us/windows/console/ecosystem-roadmap" << endl;
-			ConsoleColor(14); // Set font color back to tan
-			cout << "It's the small joys that keep programming interesting, even when you're new like me." << endl;
-			break;
-		case 8: // Reset menu color
-			MenuColorDefault();
-			break;
+/**
+ * Load the course into the appropriate data structure
+ *
+ * Time: O(1)
+ * Space: O(1)
+ * @param int currLoaded: The currently loaded data structure, 1 for vector, 2 for hash table, 3 for binary search tree
+ * @param Course course: The course to be loaded
+ */
+void Menu::LoadIntoStructure(int &currLoaded, Course &course) {
+	if (currLoaded == 1) {
+		if (courseVector != nullptr) { // Exists
+					courseVector->Insert(course);
 		}
-		cout << endl; // Cosmetic line break
+		else { // Does not exist, create it first
+					CreateVector();
+					courseVector->Insert(course);
+		}
 	}
-	cout << "Good bye." << endl;
-	return;
+	if (currLoaded == 2) {
+		if (courseTable != nullptr) { // Exists
+			courseTable->InsertItem(course);
+		}
+		else { // Does not exist, create it first
+			CreateCourseTable();
+			courseTable->InsertItem(course);
+		}
+		
+	}
+	if (currLoaded == 3) {
+		if (courseBST != nullptr) { // Exists
+			courseBST->Insert(course);
+		}
+		else { // Does not exist, create it first
+			CreateBST();
+			courseBST->Insert(course);
+		}
+	}
+
 }
 
+/**
+ * Print the data structure in all relevant ways
+ *
+ * Time: O(1)
+ * Space: O(1)
+ * @param int currLoaded: The currently loaded data structure, 1 for vector, 2 for hash table, 3 for binary search tree
+ */
 void Menu::DataStructureChoicePrinter(int& curLoaded) {
-	//take choice from main
-
-	//	if (curLoaded is 1) {
-	//		call vector print
-	//	}
+	if (curLoaded == 1) {
+		PrintVector();
+	}
 	if (curLoaded == 2) {
 		PrintCourseTable();
 	}
-	//if (curLoaded is 3) {
-	//	call InOrder()
+	if (curLoaded == 3) {
+		PrintBST();
+	}
 	return;
 }
 
+/**
+ * Demonstrate the search function of the data structure
+ * 
+ * Time: O(1)
+ * Space: O(1)
+ * @param int currLoaded: The currently loaded data structure, 1 for vector, 2 for hash table, 3 for binary search tree
+ * @param string searchTerm: The course number to be searched for
+ */
 void Menu::DataStructureChoiceFinder(int &curLoaded, string &searchTerm) {
-	//take curLoaded from main
-	//	int searchKey = 100
-
-	//	if (curLoaded is 1) {
-	//		call vector search
-	//	}
+	if (curLoaded == 1) {
+		SearchVector(searchTerm);
+	}
 	if (curLoaded == 2) {
 		SearchCourseTable(searchTerm);
 	}
-	//if (curLoaded is 3) {
-	//	call Search(searchKey)
-
-	//		return;
-	//}
+	if (curLoaded == 3) {
+		SearchBST(searchTerm);
+		return;
+	}
 }
 
-void Menu::DataStructureChoiceRemover(int &curLoaded, string &removeTerm) {
-	//take curLoaded from main
 
-	//	if (curLoaded is 1) {
-	//		call vector remove
-	//	}
+/**
+ * Demonstrate removal of a course from the data structure
+ *
+ * Time: O(1)
+ * Space: O(1)
+ * @param int currLoaded: The currently loaded data structure, 1 for vector, 2 for hash table, 3 for binary search tree
+ * @param string searchTerm: The course number to be removed
+ */
+void Menu::DataStructureChoiceRemover(int &curLoaded, string &removeTerm) {
+	if (curLoaded == 1) {
+		RemoveVector(removeTerm);
+	}
 	if (curLoaded == 2) {
 		RemoveCourseTable(removeTerm);
 	}
-	//if (curLoaded is 3) {
-	//	call Remove(removeKey)
-
-	//		return;
-	//}
+	if (curLoaded == 3) {
+		RemoveBST(removeTerm);
+		return;
+	}
 }
 
+/**
+ * Free the memory of the data structure
+ *
+ * Time: O(1)
+ * Space: O(1)
+ * @param int currLoaded: The currently loaded data structure, 1 for vector, 2 for hash table, 3 for binary search tree
+ */
 void Menu::DataStructureReleaser(int& curLoaded) {
 	if (curLoaded == 1) {
-		//call vector release
+		DeleteVector();
 	}
 	if (curLoaded == 2) {
-		//call hash table release
+		DeleteCourseTable();
 	}
 	if (curLoaded == 3) {
-		//call Release()
+		DeleteBST();
 	}
 	return;
+}
+
+/**
+ * Demonstrate the relative speeds of the data structures
+ *
+ * Time: O(1)
+ * Space: O(1)
+ */
+void Menu::RelativeSpeeds(string &filename) {
+	int currLoaded = 1;
+	vector<clock_t> computeClock; // Vector to hold the clock ticks for each operation by structure
+	// Vector:
+	clock_t ticks = clock();
+	CreateFromFile(filename, currLoaded);
+	ticks = clock() - ticks;
+	cout << "\nVector loaded in " << ticks << " ticks." << endl;
+	computeClock.push_back(ticks);
+	ticks = clock();
+
+
+
+	// Hash Table:
+	currLoaded = 2;
+	CreateFromFile(filename, currLoaded);
+	ticks = clock() - ticks;
+	cout << "Hash Table loaded in " << ticks << " ticks." << endl;
+	ticks = clock();
+
+	// Binary Search Tree:
+	currLoaded = 3;
+	CreateFromFile(filename, currLoaded);
+	ticks = clock() - ticks;
+	cout << "Binary Search Tree loaded in " << ticks << " ticks." << endl;
 }
 
 //============================================================================
