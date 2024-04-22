@@ -1,20 +1,16 @@
 ﻿///////////////////////////
 // By:                 ///
 // Connor Sculthorpe  ///
-// 20 April 2024     ///
+// 21 April 2024     ///
 ///////////////////////
 
-//#include <algorithm>
-//#include <climits>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-//#include <string>
-//#include <time.h>
 #include <vector>
-#include <regex>
-//#include <climits>
+#include <regex> // Regular expressions
 #include <Windows.h> // Console color
+#include <conio.h> // _getch
 
 using namespace std;
 void verifyFile(string &filename);
@@ -90,6 +86,7 @@ void CourseVector::Remove(string courseNumber) {
 		});
 	if (it != courses.end()) {
 		courses.erase(it);
+		cout << "Removed " << courseNumber << endl;
 	}
 	else {
 		cout << "Course " << courseNumber << " not found." << endl;
@@ -142,14 +139,14 @@ void CourseVector::Print() {
 }
 
 /**
- * Sort the vector by course number
+ * Sort the vector by course title alphanumerically
  *
  * Time: O(n log n)
  * Space: O(1)
  */
 void CourseVector::SortByCourseNumber() {
 	sort(courses.begin(), courses.end(), [](const Course& a, const Course& b) {
-		return a.courseNumber < b.courseNumber;
+		return a.courseTitle < b.courseTitle;
 	});
 	return;
 }
@@ -479,7 +476,6 @@ void BST::vectorPrinter(vector<string> Vector) {
 // Hash Table methods
 //============================================================================
 
-
 class HashTable {
 private:
 	const unsigned int DEFAULT_SIZE = 97; // Largest 2 digit prime as a default constant
@@ -689,7 +685,7 @@ void HashTable::SearchHash(string courseNumber) {
 	while (current != nullptr) { // Traverse the linked list
 		if (current->key != UINT_MAX && courseNumber == current->course.courseNumber) { // Check if the course number matches
 			cout << "\nCourse found.\n" << current->course.courseTitle
-				<< "  || " << current->course.courseNumber << " || ";
+				<< "  | " << current->course.courseNumber << " | ";
 			for (auto i : current->course.coursePrerequisites) {
 				cout << i << ',';
 			}
@@ -709,10 +705,10 @@ void HashTable::SearchHash(string courseNumber) {
  * Space: O(n)
  */
 void HashTable::PrintHash() {
-	for (unsigned int i = 0; i < nodes.size(); ++i) {
-		htNode* current = &(nodes.at(i));
+	for (unsigned int i = 0; i < nodes.size(); ++i) { // Traverse
+		htNode* current = &(nodes.at(i)); // Get the first node at the index
 		while (current != nullptr) {
-			if (current->key != UINT_MAX) {
+			if (current->key != UINT_MAX) { // Check if the node is not empty
 				cout << current->course.courseNumber << ": " << current->course.courseTitle << " | ";
 				for (auto i : current->course.coursePrerequisites) {
 					cout << i << ',';
@@ -777,10 +773,10 @@ private:
 	void DataStructureChoicePrinter(int &curLoaded);
 	void DataStructureChoiceFinder(int &curLoaded, string &searchTerm);
 	void DataStructureChoiceRemover(int &curLoaded, string &removeTerm);
-	void ConsoleColor(int color) { // Reference: https://stackoverflow.com/q/4053837/
+	void ConsoleColor(int color) { // Obsolete, Reference: https://stackoverflow.com/q/4053837/
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color); // Set the console text color
 	}
-	void MenuColorDefault() { 
+	void MenuColorDefault() { // Obsolete
 		ConsoleColor(7); // Set background color back to white/gray
 	}
 	void CreateFromFile(string &filename, int &currLoaded);
@@ -797,6 +793,7 @@ private:
 		courseVector.reset(); // Deletes the vector
 	}
 	void PrintVector() {
+		courseVector->SortByCourseNumber(); // Sort the vector by course number
 		cout << "\nVector:\n"
 			<< "Course Number: Course Title | Course Prerequisites, " << endl;
 		courseVector->Print();
@@ -816,13 +813,7 @@ private:
 	void DeleteBST() { // 
 		courseBST.reset(); // Deletes the BST
 	}
-	void PrintBST() {
-		cout << "\nBinary Search Tree:\n"
-			<< "Course Number: Course Title | Course Prerequisites, " << endl;
-		courseBST->InOrder();
-		courseBST->PreOrder();
-		courseBST->PostOrder();
-	}
+	clock_t PrintBST();
 	void SearchBST(string &courseNumber) {
 		courseBST->Search(courseNumber);
 	}
@@ -839,22 +830,13 @@ private:
 	void DeleteCourseTable() {
 		courseTable.reset();  // Deletes the CourseTable
 	}
-	void PrintCourseTable() {
-		cout << "\nHash Table:\n"
-			<< "Course Number: Course Title | Course Prerequisites, " << endl;
-		courseTable->PrintHash();
-		cout << "\nHash Table in order:\n"
-			<< "Course Number: Course Title | Course Prerequisites, " << endl;
-		courseTable->PrintHashInOrder();
-	}
+	clock_t PrintCourseTable();
 	void SearchCourseTable(string courseNumber) {
 		courseTable->SearchHash(courseNumber);
 	}
 	void RemoveCourseTable(string courseNumber) {
 		courseTable->RemoveItem(courseNumber);
 	}
-
-	// void Subdivider();
 
 public:
 
@@ -874,23 +856,20 @@ void Menu::InputMenu(string &filename) {
 		cout << "4. Print loaded data" << endl;
 		cout << "5. Find selected data" << endl;
 		cout << "6. Remove selected data" << endl;
-		//cout << "7. Change menu color" << endl;
-		//cout << "8. Reset menu color" << endl;
-		cout << "7. Display relative data structure speeds" << endl; // FIXME: Add this function
+		cout << "7. Display relative data structure speeds" << endl;
+		cout << "8. Change input file and search/remove course number" << endl;
 		cout << "9. Exit" << endl;
 		cin >> choice;
 
 		switch (choice) {
 
 		case 1: // Load vector
-			DataStructureReleaser(curLoaded);
 			curLoaded = 1; // Set flag for the vector as the loaded element
 			CreateFromFile(filename, curLoaded); // Load the vector
-			//SortVectorByCourseNumber();
-			
+			courseVector->SortByCourseNumber(); // Sort the vector by course number
 			break;
 
-		case 2: // Load Hash Table // FIXME: Throws an exception when trying to switch data types? Debug this one
+		case 2: // Load Hash Table
 			DataStructureReleaser(curLoaded);
 			curLoaded = 2; // Set flag for the hash table as the loaded element
 			CreateFromFile(filename, curLoaded); // Load the hash table
@@ -917,7 +896,14 @@ void Menu::InputMenu(string &filename) {
 			break;
 			//FIXME: Use menu 7/8 to cin chosenCourseNumber
 		case 7: // Display relative data structure speeds
-
+			RelativeSpeeds(filename);
+			break;
+		case 8:
+			cout << "Input file name: " << endl;
+			cin >> filename;
+			cout << "Input search/remove course number: " << endl;
+			cin >> chosenCourseNumber;
+			break;
 		case 0: // Change menu color
 			// Note that cin is unformatted, you would need printf to print color
 			ConsoleColor(14); // Set font color to tan
@@ -927,10 +913,8 @@ void Menu::InputMenu(string &filename) {
 			cout << "https://learn.microsoft.com/en-us/windows/console/ecosystem-roadmap" << endl;
 			ConsoleColor(14); // Set font color back to tan
 			cout << "It's the small joys that keep programming interesting, even when you're new like me." << endl;
+			MenuColorDefault();
 			break;
-		//case 8: // Reset menu color
-		//	MenuColorDefault();
-		//	break;
 		}
 		cout << endl; // Cosmetic line break
 	}
@@ -947,6 +931,7 @@ void Menu::InputMenu(string &filename) {
  * @param string filename to be opened
  */
 void Menu::CreateFromFile(string &file, int &currLoaded) {
+	DataStructureReleaser(currLoaded); // Release the current data structure
 	string line = ""; // Holds each line read from file
 	//cout << "create hash step 1" << endl;
 	verifyFile(file); // Verify the file is in the correct format
@@ -1123,37 +1108,123 @@ void Menu::DataStructureReleaser(int& curLoaded) {
 	return;
 }
 
+clock_t Menu::PrintBST() {
+	cout << "\nBinary Search Tree:\n"
+		<< "Course Number: Course Title | Course Prerequisites, " << endl;
+	clock_t ticks = clock();
+	//courseBST->InOrderNonRecursive();
+	courseBST->InOrder();
+	ticks = clock() - ticks;
+	courseBST->PreOrder();
+	courseBST->PostOrder();
+	return ticks;
+}
+
 /**
- * Demonstrate the relative speeds of the data structures
+ * Print the hash table
  *
- * Time: O(1)
- * Space: O(1)
+ * Time: O(n)
+ * Space: O(n)
+ */
+clock_t Menu::PrintCourseTable() {
+	clock_t ticks; // Vector to hold the clock ticks for each operation
+	
+	cout << "\nHash Table:\n"
+		<< "Course Number: Course Title | Course Prerequisites, " << endl;
+	courseTable->PrintHash();
+	cout << "\nHash Table in order:\n"
+		<< "Course Number: Course Title | Course Prerequisites, " << endl;
+	ticks = clock();
+	courseTable->PrintHashInOrder();
+	ticks = clock() - ticks;
+	return ticks;
+}
+
+/**
+ * Demonstrate the relative speeds of the data structures.
+ * Mnemoic: Sampo
+ *
+ * Time: O()
+ * Space: O()
  */
 void Menu::RelativeSpeeds(string &filename) {
 	int currLoaded = 1;
-	vector<clock_t> computeClock; // Vector to hold the clock ticks for each operation by structure
+	string useTerm = "CSCI300";
+	vector<clock_t> VectorClock; // Vector to hold the clock ticks for each operation by Vector
+	vector<clock_t> HashTableClock; // Vector to hold the clock ticks for each operation by Hash Table
+	vector<clock_t> BSTClock; // Vector to hold the clock ticks for each operation by Binary Search Tree
+
+	// Create
+	// Search
+	// Remove
+	// Print
+
 	// Vector:
 	clock_t ticks = clock();
-	CreateFromFile(filename, currLoaded);
+	CreateFromFile(filename, currLoaded); // Create
 	ticks = clock() - ticks;
-	cout << "\nVector loaded in " << ticks << " ticks." << endl;
-	computeClock.push_back(ticks);
+	VectorClock.push_back(ticks);
 	ticks = clock();
-
-
+	DataStructureChoiceFinder(currLoaded, useTerm); // Search
+	ticks = clock() - ticks;
+	VectorClock.push_back(ticks);
+	ticks = clock();
+	DataStructureChoiceRemover(currLoaded, useTerm); // Remove
+	ticks = clock() - ticks;
+	VectorClock.push_back(ticks);
+	ticks = clock();
+	DataStructureChoicePrinter(currLoaded); // Print
+	ticks = clock() - ticks;
+	VectorClock.push_back(ticks);
+	
 
 	// Hash Table:
 	currLoaded = 2;
-	CreateFromFile(filename, currLoaded);
-	ticks = clock() - ticks;
-	cout << "Hash Table loaded in " << ticks << " ticks." << endl;
 	ticks = clock();
+	CreateFromFile(filename, currLoaded); // Create
+	ticks = clock() - ticks;
+	HashTableClock.push_back(ticks);
+	ticks = clock();
+	DataStructureChoiceFinder(currLoaded, useTerm); // Search
+	ticks = clock() - ticks;
+	HashTableClock.push_back(ticks);
+	ticks = clock();
+	DataStructureChoiceRemover(currLoaded, useTerm); // Remove
+	ticks = clock() - ticks;
+	HashTableClock.push_back(ticks);
+	ticks = clock();
+	int returnValue = PrintCourseTable(); // Print
+	HashTableClock.push_back(returnValue);
 
 	// Binary Search Tree:
 	currLoaded = 3;
-	CreateFromFile(filename, currLoaded);
+	ticks = clock();
+	CreateFromFile(filename, currLoaded); // Create
 	ticks = clock() - ticks;
-	cout << "Binary Search Tree loaded in " << ticks << " ticks." << endl;
+	BSTClock.push_back(ticks);
+	ticks = clock();
+	DataStructureChoiceFinder(currLoaded, useTerm); // Search
+	ticks = clock() - ticks;
+	BSTClock.push_back(ticks);
+	ticks = clock();
+	DataStructureChoiceRemover(currLoaded, useTerm); // Remove
+	ticks = clock() - ticks;
+	BSTClock.push_back(ticks);
+	ticks = clock();
+	DataStructureChoicePrinter(currLoaded); // Print
+	ticks = clock() - ticks;
+	BSTClock.push_back(ticks);
+	// Done with the operations
+	
+	// Print the results
+	cout << "\n\nRelative speeds of data structures:" << endl;
+	cout << "Vector: Create: " << VectorClock[0] << ", Search: "
+		<< VectorClock[1] << ", Remove: " << VectorClock[2] << ", Print: " << VectorClock[3] << endl;
+	cout << "Hash Table: Create: " << HashTableClock[0] << ", Search: "
+		<< HashTableClock[1] << ", Remove: " << HashTableClock[2] << ", Print: " << HashTableClock[3] << endl;
+	cout << "Binary Search Tree: Create: " << BSTClock[0] << ", Search: "
+		<< BSTClock[1] << ", Remove: " << BSTClock[2] << ", Print: " << BSTClock[3] << endl;
+	return;
 }
 
 //============================================================================
@@ -1161,16 +1232,16 @@ void Menu::RelativeSpeeds(string &filename) {
 //============================================================================
 
 
- /**
-  * Verifies file and data integrity and validity of a course document. Returns specific errors about different file format issues.
-  *
-  * Time: O(n), where n is the number of lines in the file
-  * Space: O(k), where k is the largest line in the file
-  * @param string filename to be searched and verified
-  *
-  * Code based on ony of my own public repositories, Hold_to_Craft
-  * https://github.com/Kubia-Beta/Hold_to_Craft
-  */
+/**
+ * Verifies file and data integrity and validity of a course document. Returns specific errors about different file format issues.
+ *
+ * Time: O(n), where n is the number of lines in the file
+ * Space: O(k), where k is the largest line in the file
+ * @param string filename to be searched and verified
+ *
+ * Code based on ony of my own public repositories, Hold_to_Craft
+ * https://github.com/Kubia-Beta/Hold_to_Craft
+ */
 void verifyFile(string &filename) {
 	string line = ""; // Comparison string, starts as empty
 	ifstream infile(filename); // Open the file
@@ -1222,11 +1293,26 @@ void verifyFile(string &filename) {
 		infile.close(); // We are done verifying, close the file
 			return;
 	}
-	catch (const std::exception& error) { // Something went wrong
+	catch (const exception& error) { // Something went wrong
 		infile.close();
 		cerr << "Error in file verification. Please check the console log." << endl;
 		return;
 	}
+}
+
+/**
+ * Halt the program until the user presses any key
+ * (Obsolete)
+ * 
+ * Time: O(1)
+ * Space: O(1)
+ * Code based on ony of my own public repositories, Hold_to_Craft
+ * https://github.com/Kubia-Beta/Hold_to_Craft
+ */
+void pressAnyKeyToContinue() { //just a simple halt for the user that doesn't enter anything into our buffer
+	cout << "\nPress any key to continue...";
+	(void)_getch(); //assigns _getch() to wait for a key press
+	cout << endl;
 }
 
 
@@ -1236,8 +1322,6 @@ void verifyFile(string &filename) {
 
 int main(int argc, char* argv[]) {
 	string filename = "ABCU_Advising_Program_Input.txt";
-	clock_t ticks;
-
 	Menu menu;
 	menu.InputMenu(filename);
 	return 0;
