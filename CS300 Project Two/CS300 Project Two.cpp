@@ -1144,8 +1144,8 @@ clock_t Menu::PrintCourseTable() {
  * Demonstrate the relative speeds of the data structures.
  * Mnemoic: Sampo
  *
- * Time: O()
- * Space: O()
+ * Time: O(n^2)
+ * Space: O(n)
  */
 void Menu::RelativeSpeeds(string &filename) {
 	int currLoaded = 1;
