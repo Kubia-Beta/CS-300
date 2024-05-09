@@ -230,7 +230,7 @@ void BST::InsertItem(Node* node, Course aCourse) {
 /**
  * Passes root to the helper function to recursively traverse left, visit root, traverse right
  *
- * Time: O(n^2), θ(n log n)
+ * Time: O(n^2), θ(n log n), Ω(1)
  * Space: O(n)
  * @param Node* node to be displayed
  */
@@ -242,7 +242,7 @@ void BST::InOrder() {
 /**
  * Recursively traverse left, visit root, traverse right
  *
- * Time: O(n^2), θ(n log n)
+ * Time: O(n^2), θ(n log n), Ω(1)
  * Space: O(n)
  * @param Node* node to be displayed
  */
@@ -258,7 +258,7 @@ void BST::InOrderHelper(Node* node) {
 
 /**
  * Passes root to the helper function to recursively visit root, traverse left, traverse right
- * Time: O(n^2), θ(n log n)
+ * Time: O(n^2), θ(n log n), Ω(1)
  * Space: O(n)
  */
 void BST::PreOrder() {
@@ -269,7 +269,7 @@ void BST::PreOrder() {
 /**
  * Recursively visit root, traverse left, traverse right
  *
- * Time: O(n^2), θ(n log n)
+ * Time: O(n^2), θ(n log n), Ω(1)
  * Space: O(n)
  * @param Node* node to be displayed
  */
