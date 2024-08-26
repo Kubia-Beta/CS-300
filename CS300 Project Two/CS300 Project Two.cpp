@@ -5,6 +5,7 @@
 ///////////////////////
 
 /* Designed around relative clock speeds, this program Compares algorithms for a custom Vector, HashTable, and Binary Search tree implementation.
+* Full writeup here: https://github.com/Kubia-Beta/CS-300
 * Another large component of the function is to verify the integrity of any CSV it loads to ensure compatibility.
 * Incompatible data is rejected with a specific error relating to the position and type of error.
 * Every function will show its translation from time and space complexity to compute time. Big O, Big Theta, and Big Omega are used. O(x), θ(x), Ω(x)
