@@ -62,8 +62,8 @@ class CourseVector {
 /**
  * Insert a course into the vector
  *
- * Time: O()
- * Space: O()
+ * Time: Time: O(1), θ(1), Ω(1)
+ * Space: O(n)
  * @param Course course to be inserted
  */
 void CourseVector::Insert(Course course) {
@@ -76,8 +76,8 @@ void CourseVector::Insert(Course course) {
  * Remove a course from the vector
  * Reference: https://www.geeksforgeeks.org/std-find-in-cpp/
  *
- * Time: O()
- * Space: O()
+ * Time: O(n)
+ * Space: O(n)
  * @param string courseNumber to be removed
  */
 void CourseVector::Remove(string courseNumber) {
@@ -98,8 +98,8 @@ void CourseVector::Remove(string courseNumber) {
 /**
  * Search for a course in the vector
  *
- * Time: O()
- * Space: O()
+ * Time: O(nk)
+ * Space: O(nk)
  * @param string courseNumber to be searched for
  */
 void CourseVector::Search(string courseNumber) {
@@ -124,8 +124,8 @@ void CourseVector::Search(string courseNumber) {
 /**
  * Print the contents of the vector
  *
- * Time: O()
- * Space: O()
+ * Time: O(n^k)
+ * Space: O(nk)
  */
 void CourseVector::Print() {
 	for (Course course : courses) {
