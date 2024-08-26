@@ -4,6 +4,15 @@
 // 21 April 2024     ///
 ///////////////////////
 
+/* Designed around relative clock speeds, this program Compares algorithms for a custom Vector, HashTable, and Binary Search tree implementation.
+* Another large component of the function is to verify the integrity of any CSV it loads to ensure compatibility.
+* Incompatible data is rejected with a specific error relating to the position and type of error.
+* Every function will show its translation from time and space complexity to compute time. Big O, Big Theta, and Big Omega are used. O(x), θ(x), Ω(x)
+* This file was requested to be one discrete unit, however, the natural state of an OOP program is to have it separated into parents and children.
+* File delineation normally occurs at every instance of "//====", allowing all functions to be abstracted into multiple files and from Main().
+*/
+
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -62,7 +71,7 @@ class CourseVector {
 /**
  * Insert a course into the vector
  *
- * Time: Time: O(1), θ(1), Ω(1)
+ * Time: O(1), θ(1), Ω(1)
  * Space: O(n)
  * @param Course course to be inserted
  */
